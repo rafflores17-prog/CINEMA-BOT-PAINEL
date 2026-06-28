@@ -495,14 +495,34 @@
 let API = '', PASS = '', currentTab = 'clientes', modalMode = 'add', editChatId = null;
 
 // ── Login ────────────────────────────────────────────────────────────────────
-function doLogin() {
+async function doLogin() {
   const api  = document.getElementById('inp-api').value.trim().replace(/\/$/, '');
   const pass = document.getElementById('inp-pass').value.trim();
   if (!api || !pass) { showLoginErr('Preencha todos os campos.'); return; }
+
+  const btn = document.querySelector('.btn-login');
+  btn.textContent = 'Verificando...';
+  btn.disabled = true;
+
+  try {
+    const r = await fetch(`${api}/admin?cmd=stats&pass=${encodeURIComponent(pass)}`);
+    if (r.status === 403) {
+      showLoginErr('Senha incorreta.');
+      btn.textContent = 'Entrar'; btn.disabled = false; return;
+    }
+    if (!r.ok) {
+      showLoginErr(`Erro ao conectar (${r.status}). Verifique a URL.`);
+      btn.textContent = 'Entrar'; btn.disabled = false; return;
+    }
+  } catch(e) {
+    showLoginErr('Não foi possível conectar. Verifique a URL do bot.');
+    btn.textContent = 'Entrar'; btn.disabled = false; return;
+  }
+
   API = api; PASS = pass;
-  // Salva no localStorage para conveniência
   localStorage.setItem('sf_api', api);
   localStorage.setItem('sf_pass', pass);
+  btn.textContent = 'Entrar'; btn.disabled = false;
   initApp();
 }
 
