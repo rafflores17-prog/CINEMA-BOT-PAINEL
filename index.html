@@ -3,367 +3,355 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StreamFlix BOT — Painel Admin</title>
+<title>StreamFlix BOT Admin</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0a0a0f;--sur:#12121a;--card:#1a1a26;--bor:#2a2a3a;
+  --acc:#e50914;--grn:#00c896;--yel:#f5a623;--ora:#ff6b35;
+  --txt:#e8e8f0;--mut:#6b6b80;--mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-height:100vh}
 
-  :root {
-    --bg:#0a0a0f; --surface:#12121a; --card:#1a1a26; --border:#2a2a3a;
-    --accent:#e50914; --accent2:#ff6b35; --green:#00c896; --yellow:#f5a623;
-    --red:#e50914; --text:#e8e8f0; --muted:#6b6b80; --mono:'JetBrains Mono',monospace;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+/* LOGIN */
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:radial-gradient(ellipse at 50% 0%,#1a0a0f,var(--bg) 70%)}
+.lbox{background:var(--sur);border:1px solid var(--bor);border-radius:16px;
+  padding:40px 32px;width:100%;max-width:360px;text-align:center}
+.ltitle{font-size:22px;font-weight:700;margin-bottom:4px}
+.lsub{color:var(--mut);font-size:13px;margin-bottom:28px}
+.lerr{color:var(--acc);font-size:13px;margin-top:10px;min-height:18px}
+.inp{width:100%;background:var(--bg);border:1px solid var(--bor);border-radius:8px;
+  padding:11px 13px;color:var(--txt);font-size:14px;margin-bottom:10px;outline:none;transition:.2s}
+.inp:focus{border-color:var(--acc)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:.15s}
+.bp{background:var(--acc);color:#fff}.bp:hover{background:#c0070f}.bp:disabled{opacity:.5;cursor:not-allowed}
+.bg2{background:#0d4f3c;color:var(--grn);border:1px solid #1a6b50}.bg2:hover{background:#0f5f48}
+.by{background:#4f3a0d;color:var(--yel);border:1px solid #6b5010}.by:hover{background:#5f4510}
+.br{background:#4f0d0d;color:var(--acc);border:1px solid #6b1010}.br:hover{background:#5f1010}
+.bgh{background:transparent;color:var(--mut);border:1px solid var(--bor)}.bgh:hover{color:var(--txt);border-color:var(--txt)}
+.bsm{padding:6px 11px;font-size:12px}
+.bfull{width:100%;padding:13px;font-size:15px;border-radius:10px;margin-top:4px}
 
-  /* LOGIN */
-  #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;
-    background:radial-gradient(ellipse at 50% 0%,#1a0a0f 0%,var(--bg) 70%)}
-  .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;
-    padding:48px 40px;width:100%;max-width:380px;text-align:center}
-  .login-logo{font-size:36px;margin-bottom:8px}
-  .login-title{font-size:22px;font-weight:700;margin-bottom:4px}
-  .login-sub{color:var(--muted);font-size:13px;margin-bottom:32px}
-  .login-err{color:var(--red);font-size:13px;margin-top:12px;min-height:18px}
-  .inp{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;
-    padding:12px 14px;color:var(--text);font-size:14px;margin-bottom:12px;outline:none;transition:.2s}
-  .inp:focus{border-color:var(--accent)}
-  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;
-    font-size:13px;font-weight:600;border:none;cursor:pointer;transition:.15s}
-  .btn-primary{background:var(--accent);color:#fff}
-  .btn-primary:hover{background:#c0070f}
-  .btn-primary:disabled{opacity:.5;cursor:not-allowed}
-  .btn-green{background:#0d4f3c;color:var(--green);border:1px solid #1a6b50}
-  .btn-green:hover{background:#0f5f48}
-  .btn-yellow{background:#4f3a0d;color:var(--yellow);border:1px solid #6b5010}
-  .btn-yellow:hover{background:#5f4510}
-  .btn-red{background:#4f0d0d;color:var(--red);border:1px solid #6b1010}
-  .btn-red:hover{background:#5f1010}
-  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
-  .btn-ghost:hover{color:var(--text);border-color:var(--text)}
-  .btn-login{width:100%;padding:14px;font-size:15px;border-radius:10px;margin-top:4px}
-  .btn-sm{padding:6px 12px;font-size:12px}
+/* APP */
+#app{display:none;flex-direction:column;min-height:100vh}
+.hdr{background:var(--sur);border-bottom:1px solid var(--bor);padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;height:52px;
+  position:sticky;top:0;z-index:100}
+.hlogo{font-size:14px;font-weight:700}.hlogo span{color:var(--acc)}
+.hright{display:flex;align-items:center;gap:8px}
+.hapi{font-size:10px;color:var(--mut);font-family:var(--mono);
+  max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rdot{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-  /* HEADER */
-  #app-screen{display:none;flex-direction:column;min-height:100vh}
-  .header{background:var(--surface);border-bottom:1px solid var(--border);
-    padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;
-    position:sticky;top:0;z-index:100}
-  .header-logo{display:flex;align-items:center;gap:10px}
-  .header-logo-icon{font-size:22px}
-  .header-logo-text{font-size:15px;font-weight:700}
-  .header-logo-text span{color:var(--accent)}
-  .header-right{display:flex;align-items:center;gap:12px}
-  .header-api{font-size:11px;color:var(--muted);font-family:var(--mono);
-    max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .realtime-dot{width:8px;height:8px;border-radius:50%;background:var(--green);
-    animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* MAIN */
+.main{flex:1;padding:14px;max-width:860px;margin:0 auto;width:100%}
 
-  /* MAIN */
-  .main{flex:1;padding:20px;max-width:900px;margin:0 auto;width:100%}
+/* STATS */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.sc{background:var(--card);border:1px solid var(--bor);border-radius:10px;padding:14px;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.sc.g::before{background:var(--grn)}.sc.r::before{background:var(--acc)}
+.sc.y::before{background:var(--yel)}.sc.o::before{background:var(--ora)}
+.slbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin-bottom:6px}
+.sval{font-size:26px;font-weight:700}
+.sval.g{color:var(--grn)}.sval.r{color:var(--acc)}.sval.y{color:var(--yel)}.sval.o{color:var(--ora)}
 
-  /* STATS */
-  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-  @media(max-width:700px){.stats-grid{grid-template-columns:1fr 1fr}}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
-    padding:16px;position:relative;overflow:hidden}
-  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-  .stat-card.green::before{background:var(--green)}
-  .stat-card.red::before{background:var(--red)}
-  .stat-card.yellow::before{background:var(--yellow)}
-  .stat-card.orange::before{background:var(--accent2)}
-  .stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;
-    color:var(--muted);margin-bottom:8px}
-  .stat-val{font-size:28px;font-weight:700;line-height:1}
-  .stat-val.green{color:var(--green)}
-  .stat-val.red{color:var(--red)}
-  .stat-val.yellow{color:var(--yellow)}
-  .stat-val.orange{color:var(--accent2)}
+/* TABS */
+.tabs{display:flex;overflow-x:auto;gap:2px;border-bottom:1px solid var(--bor);margin-bottom:16px;
+  scrollbar-width:none;-ms-overflow-style:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;color:var(--mut);
+  border-bottom:2px solid transparent;transition:.15s;white-space:nowrap;flex-shrink:0}
+.tab.on{color:var(--txt);border-color:var(--acc)}
+.tc{display:none}.tc.on{display:block}
 
-  /* TABS */
-  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:20px}
-  .tab{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);
-    border-bottom:2px solid transparent;transition:.15s;white-space:nowrap}
-  .tab.active{color:var(--text);border-color:var(--accent)}
-  .tab-content{display:none}
-  .tab-content.active{display:block}
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.stitle{font-size:13px;font-weight:700}
+.sact{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 
-  /* SECTION HEADER */
-  .section-header{display:flex;align-items:center;justify-content:space-between;
-    flex-wrap:wrap;gap:10px;margin-bottom:14px}
-  .section-title{font-size:14px;font-weight:700}
-  .section-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+/* SEARCH */
+.swrap{position:relative}
+.swrap input{background:var(--bg);border:1px solid var(--bor);border-radius:7px;
+  padding:7px 10px 7px 28px;color:var(--txt);font-size:12px;outline:none;width:150px}
+.swrap input:focus{border-color:var(--acc)}
+.sico{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:12px}
 
-  /* SEARCH */
-  .search-wrap{position:relative;flex:1;min-width:160px}
-  .search-wrap input{width:100%;background:var(--bg);border:1px solid var(--border);
-    border-radius:8px;padding:8px 12px 8px 32px;color:var(--text);font-size:13px;outline:none}
-  .search-wrap input:focus{border-color:var(--accent)}
-  .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);
-    color:var(--muted);font-size:13px}
+/* CARDS DE CLIENTE */
+.clist{display:flex;flex-direction:column;gap:8px}
+.ccard{background:var(--card);border:1px solid var(--bor);border-radius:10px;padding:12px}
+.ccard-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;
+  font-size:11px;font-weight:600;flex-shrink:0}
+.bg-g{background:#0d4f3c;color:var(--grn)}
+.bg-r{background:#4f0d0d;color:var(--acc)}
+.bg-y{background:#4f3a0d;color:var(--yel)}
+.cid{font-family:var(--mono);font-size:12px;color:var(--txt);flex:1;overflow:hidden;text-overflow:ellipsis}
+.cinfo{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.ci{font-size:11px;color:var(--mut)}
+.ci span{color:var(--txt);font-weight:600}
+.cacts{display:flex;gap:6px;flex-wrap:wrap}
+.empty{text-align:center;padding:28px;color:var(--mut);font-size:13px}
 
-  /* TABLE */
-  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;
-    overflow:hidden;overflow-x:auto}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{background:var(--surface);padding:10px 14px;text-align:left;font-size:11px;
-    font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);
-    white-space:nowrap}
-  td{padding:12px 14px;border-top:1px solid var(--border);vertical-align:middle}
-  tr:hover td{background:rgba(255,255,255,.02)}
-  .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;
-    font-size:11px;font-weight:600}
-  .badge-green{background:#0d4f3c;color:var(--green)}
-  .badge-red{background:#4f0d0d;color:var(--red)}
-  .badge-yellow{background:#4f3a0d;color:var(--yellow)}
-  .mono{font-family:var(--mono);font-size:12px}
-  .empty{text-align:center;padding:32px;color:var(--muted);font-size:13px}
-  .actions-cell{display:flex;gap:6px;flex-wrap:wrap}
+/* TOKENS */
+.tklist{display:flex;flex-direction:column;gap:7px}
+.tkitem{background:var(--card);border:1px solid var(--bor);border-radius:8px;
+  padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tkitem.used{opacity:.4}
+.tkcode{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.5px}
+.tkmeta{font-size:11px;color:var(--mut);margin-top:2px}
+.cpbtn{background:var(--sur);border:1px solid var(--bor);color:var(--txt);
+  font-size:11px;padding:5px 9px;border-radius:6px;cursor:pointer;transition:.15s;flex-shrink:0}
+.cpbtn:hover{border-color:var(--acc);color:var(--acc)}
+.cpbtn.ok{border-color:var(--grn);color:var(--grn)}
+.frow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.fbtn{padding:5px 12px;font-size:11px;font-weight:600;border-radius:100px;cursor:pointer;
+  background:transparent;border:1px solid var(--bor);color:var(--mut);transition:.15s}
+.fbtn.on{border-color:var(--acc);color:var(--acc)}
+.genrow{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.genrow select{background:var(--bg);border:1px solid var(--bor);border-radius:7px;
+  padding:7px 10px;color:var(--txt);font-size:13px;outline:none}
 
-  /* TOKENS */
-  .token-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-  .token-item{background:var(--card);border:1px solid var(--border);border-radius:8px;
-    padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-  .token-item.used{opacity:.45}
-  .token-code{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.5px}
-  .token-meta{font-size:11px;color:var(--muted)}
-  .token-actions{display:flex;gap:6px;flex-shrink:0}
-  .btn-copy{background:var(--surface);border:1px solid var(--border);color:var(--text);
-    font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer;transition:.15s}
-  .btn-copy:hover{border-color:var(--accent);color:var(--accent)}
-  .btn-copy.copied{border-color:var(--green);color:var(--green)}
-  .token-gen-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .token-gen-row select{background:var(--bg);border:1px solid var(--border);border-radius:8px;
-    padding:8px 12px;color:var(--text);font-size:13px;outline:none}
+/* BROADCAST / PROPA */
+.bcard{background:var(--card);border:1px solid var(--bor);border-radius:10px;padding:14px;margin-bottom:12px}
+.bcard textarea{width:100%;background:var(--bg);border:1px solid var(--bor);border-radius:7px;
+  padding:10px;color:var(--txt);font-size:13px;resize:vertical;min-height:90px;outline:none;margin:8px 0}
+.bcard textarea:focus{border-color:var(--acc)}
+.binfo{font-size:12px;color:var(--mut);margin-bottom:6px}
 
-  /* BROADCAST */
-  .broadcast-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
-  .broadcast-box textarea{width:100%;background:var(--bg);border:1px solid var(--border);
-    border-radius:8px;padding:12px;color:var(--text);font-size:13px;resize:vertical;
-    min-height:100px;outline:none;margin:10px 0}
-  .broadcast-box textarea:focus{border-color:var(--accent)}
-  .broadcast-info{font-size:12px;color:var(--muted);margin-bottom:10px}
+/* HISTORICO */
+.hitem{background:var(--card);border:1px solid var(--bor);border-radius:8px;
+  padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:7px}
+.hico{font-size:16px;flex-shrink:0}
+.htxt{font-size:12px;line-height:1.5}
+.htime{font-size:11px;color:var(--mut)}
 
-  /* HISTORICO */
-  .hist-item{background:var(--card);border:1px solid var(--border);border-radius:8px;
-    padding:12px 14px;display:flex;gap:12px;align-items:flex-start;margin-bottom:8px}
-  .hist-icon{font-size:18px;flex-shrink:0}
-  .hist-text{font-size:13px;line-height:1.5}
-  .hist-time{font-size:11px;color:var(--muted)}
+/* PROPA ITEMS */
+.pitem{background:var(--card);border:1px solid var(--bor);border-radius:8px;
+  padding:10px 12px;margin-bottom:7px}
+.ptxt{font-size:12px;line-height:1.6;margin:4px 0 8px}
+.pmeta{font-size:11px;color:var(--mut)}
 
-  /* COMANDOS */
-  .cmd-group{background:var(--card);border:1px solid var(--border);border-radius:12px;
-    padding:16px;margin-bottom:12px}
-  .cmd-group-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
-    color:var(--muted);margin-bottom:12px}
-  .cmd-item{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-  .cmd-item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
-  .cmd-syntax{font-family:var(--mono);font-size:13px;color:var(--accent2);margin-bottom:3px}
-  .cmd-desc{font-size:12px;color:var(--muted)}
+/* COMANDOS */
+.cgrp{background:var(--card);border:1px solid var(--bor);border-radius:10px;padding:14px;margin-bottom:10px}
+.cgtitle{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin-bottom:10px}
+.citem{margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--bor)}
+.citem:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.csyn{font-family:var(--mono);font-size:12px;color:var(--ora);margin-bottom:2px}
+.cdesc{font-size:11px;color:var(--mut)}
 
-  /* MODAL */
-  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
-    z-index:200;align-items:center;justify-content:center;padding:20px}
-  .modal-overlay.open{display:flex}
-  .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;
-    padding:28px;width:100%;max-width:420px}
-  .modal-title{font-size:17px;font-weight:700;margin-bottom:20px}
-  .modal-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;
-    text-transform:uppercase;letter-spacing:.4px}
-  .modal-field{margin-bottom:14px}
-  .modal-err{color:var(--red);font-size:12px;margin-top:8px;min-height:16px}
-  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
-  select.inp{appearance:none}
+/* MODAL */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;
+  align-items:center;justify-content:center;padding:16px}
+.mov.on{display:flex}
+.mbox{background:var(--sur);border:1px solid var(--bor);border-radius:14px;
+  padding:24px;width:100%;max-width:400px}
+.mtitle{font-size:16px;font-weight:700;margin-bottom:16px}
+.mfld{margin-bottom:12px}
+.mlbl{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.merr{color:var(--acc);font-size:12px;margin-top:6px;min-height:16px}
+.mact{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
 
-  /* TOAST */
-  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-    background:var(--surface);border:1px solid var(--border);border-radius:10px;
-    padding:12px 20px;font-size:13px;font-weight:600;opacity:0;transition:.3s;
-    z-index:300;white-space:nowrap;pointer-events:none}
-  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* TOAST */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--sur);border:1px solid var(--bor);border-radius:9px;
+  padding:10px 18px;font-size:13px;font-weight:600;opacity:0;transition:.3s;
+  z-index:300;white-space:nowrap;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">🎬</div>
-    <div class="login-title">Stream<span style="color:var(--accent)">Flix</span> BOT</div>
-    <div class="login-sub">Painel Administrativo</div>
-    <input class="inp" id="inp-api" type="url" placeholder="https://seu-bot.koyeb.app" autocomplete="off" />
-    <input class="inp" id="inp-pass" type="password" placeholder="Senha admin" autocomplete="off"
-      onkeydown="if(event.key==='Enter')doLogin()" />
-    <div class="login-err" id="login-err"></div>
-    <button class="btn btn-primary btn-login" onclick="doLogin()">Entrar</button>
+<div id="login">
+  <div class="lbox">
+    <div style="font-size:32px;margin-bottom:8px">🎬</div>
+    <div class="ltitle">Stream<span style="color:var(--acc)">Flix</span> BOT</div>
+    <div class="lsub">Painel Administrativo</div>
+    <input class="inp" id="inp-api" type="url" placeholder="https://seu-bot.koyeb.app" autocomplete="off"/>
+    <input class="inp" id="inp-pass" type="password" placeholder="Senha admin"
+      onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="lerr" id="lerr"></div>
+    <button class="btn bp bfull" onclick="doLogin()" id="lbtn">Entrar</button>
   </div>
 </div>
 
 <!-- APP -->
-<div id="app-screen">
-  <div class="header">
-    <div class="header-logo">
-      <span class="header-logo-icon">🎬</span>
-      <span class="header-logo-text">Stream<span>Flix</span> <span style="color:var(--muted);font-weight:400">BOT Admin</span></span>
-    </div>
-    <div class="header-right">
-      <div class="realtime-dot" title="Atualização automática ativa"></div>
-      <div class="header-api" id="header-api"></div>
-      <button class="btn btn-ghost btn-sm" onclick="logout()">Sair</button>
+<div id="app">
+  <div class="hdr">
+    <div class="hlogo">Stream<span>Flix</span> <span style="color:var(--mut);font-weight:400">Admin</span></div>
+    <div class="hright">
+      <div class="rdot"></div>
+      <div class="hapi" id="hapi"></div>
+      <button class="btn bgh bsm" onclick="logout()">Sair</button>
     </div>
   </div>
 
   <div class="main">
     <!-- STATS -->
-    <div class="stats-grid">
-      <div class="stat-card green"><div class="stat-label">Ativos</div><div class="stat-val green" id="s-ativos">—</div></div>
-      <div class="stat-card red"><div class="stat-label">Expirados</div><div class="stat-val red" id="s-exp">—</div></div>
-      <div class="stat-card yellow"><div class="stat-label">Tokens Livres</div><div class="stat-val yellow" id="s-tokens">—</div></div>
-      <div class="stat-card orange"><div class="stat-label">Receita/Mês</div><div class="stat-val orange" id="s-receita">—</div></div>
+    <div class="sgrid">
+      <div class="sc g"><div class="slbl">Ativos</div><div class="sval g" id="s-at">—</div></div>
+      <div class="sc r"><div class="slbl">Expirados</div><div class="sval r" id="s-ex">—</div></div>
+      <div class="sc y"><div class="slbl">Tokens Livres</div><div class="sval y" id="s-tk">—</div></div>
+      <div class="sc o"><div class="slbl">Receita/Mês</div><div class="sval o" id="s-rc">—</div></div>
     </div>
 
     <!-- TABS -->
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('clientes')">👥 Clientes</div>
-      <div class="tab" onclick="switchTab('tokens')">🎟️ Tokens</div>
-      <div class="tab" onclick="switchTab('broadcast')">📢 Mensagem</div>
-      <div class="tab" onclick="switchTab('historico')">📋 Histórico</div>
-      <div class="tab" onclick="switchTab('comandos')">⌨️ Comandos</div>
+      <div class="tab on" onclick="goTab('cl')">👥 Clientes</div>
+      <div class="tab" onclick="goTab('tk')">🎟️ Tokens</div>
+      <div class="tab" onclick="goTab('bc')">📢 Mensagem</div>
+      <div class="tab" onclick="goTab('pr')">📣 Propagandas</div>
+      <div class="tab" onclick="goTab('hi')">📋 Histórico</div>
+      <div class="tab" onclick="goTab('cm')">⌨️ Comandos</div>
     </div>
 
     <!-- CLIENTES -->
-    <div class="tab-content active" id="tab-clientes">
-      <div class="section-header">
-        <div class="section-title">Clientes cadastrados</div>
-        <div class="section-actions">
-          <div class="search-wrap">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="search-clientes" placeholder="Buscar Chat ID..." oninput="filterClientes()" />
+    <div class="tc on" id="tc-cl">
+      <div class="sh">
+        <div class="stitle">Clientes cadastrados</div>
+        <div class="sact">
+          <div class="swrap">
+            <span class="sico">🔍</span>
+            <input type="text" placeholder="Chat ID..." oninput="filterCl(this.value)"/>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="loadAll()">↻ Atualizar</button>
-          <button class="btn btn-primary btn-sm" onclick="openModal('add')">+ Adicionar</button>
+          <button class="btn bgh bsm" onclick="loadAll()">↻</button>
+          <button class="btn bp bsm" onclick="openMod('add')">+ Adicionar</button>
         </div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Chat ID</th>
-              <th>Validade</th>
-              <th>Dias</th>
-              <th>Modo</th>
-              <th>Site</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-clientes"><tr><td colspan="7" class="empty">Carregando...</td></tr></tbody>
-        </table>
-      </div>
+      <div class="clist" id="cl-list"><div class="empty">Carregando...</div></div>
     </div>
 
     <!-- TOKENS -->
-    <div class="tab-content" id="tab-tokens">
-      <div class="section-header">
-        <div class="section-title">Tokens de acesso</div>
-        <div class="section-actions">
-          <div class="token-gen-row">
-            <select id="qtd-tokens" class="inp" style="width:auto;padding:8px 12px;margin:0">
-              <option value="1">1 token</option>
-              <option value="3">3 tokens</option>
-              <option value="5">5 tokens</option>
-              <option value="10">10 tokens</option>
-            </select>
-            <button class="btn btn-primary btn-sm" onclick="gerarTokens()">🎟️ Gerar</button>
-          </div>
-        </div>
+    <div class="tc" id="tc-tk">
+      <div class="sh"><div class="stitle">Tokens de acesso</div></div>
+      <div class="genrow">
+        <select id="qtk">
+          <option value="1">1 token</option>
+          <option value="3">3 tokens</option>
+          <option value="5">5 tokens</option>
+          <option value="10">10 tokens</option>
+        </select>
+        <button class="btn bp bsm" onclick="gerarTk()">🎟️ Gerar</button>
       </div>
-
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button class="btn btn-ghost btn-sm" id="btn-filter-livres" onclick="setTokenFilter('livres')" style="border-color:var(--accent);color:var(--accent)">Livres</button>
-        <button class="btn btn-ghost btn-sm" id="btn-filter-usados" onclick="setTokenFilter('usados')">Usados</button>
-        <button class="btn btn-ghost btn-sm" id="btn-filter-todos" onclick="setTokenFilter('todos')">Todos</button>
+      <div class="frow">
+        <button class="fbtn on" id="fb-livres" onclick="setTkFilter('livres')">Livres</button>
+        <button class="fbtn" id="fb-usados" onclick="setTkFilter('usados')">Usados</button>
+        <button class="fbtn" id="fb-todos" onclick="setTkFilter('todos')">Todos</button>
       </div>
-
-      <div class="token-list" id="token-list">
-        <div class="empty">Carregando tokens...</div>
-      </div>
+      <div class="tklist" id="tk-list"><div class="empty">Carregando...</div></div>
     </div>
 
     <!-- BROADCAST -->
-    <div class="tab-content" id="tab-broadcast">
-      <div class="broadcast-box">
-        <div class="section-title" style="margin-bottom:8px">📢 Enviar mensagem para todos os clientes ativos</div>
-        <div class="broadcast-info" id="broadcast-info">Carregando número de clientes ativos...</div>
-        <textarea id="broadcast-msg" placeholder="Digite a mensagem aqui... (suporta emojis 🎬)"></textarea>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="enviarBroadcast()">📤 Enviar para todos</button>
-          <span style="font-size:12px;color:var(--muted)" id="broadcast-status"></span>
+    <div class="tc" id="tc-bc">
+      <div class="bcard">
+        <div class="stitle" style="margin-bottom:6px">📢 Mensagem para todos os clientes ativos</div>
+        <div class="binfo" id="bc-info">—</div>
+        <textarea id="bc-msg" placeholder="Digite a mensagem..."></textarea>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn bp" onclick="enviarBC()">📤 Enviar para todos</button>
+          <span id="bc-st" style="font-size:12px;color:var(--mut)"></span>
         </div>
       </div>
     </div>
 
-    <!-- HISTORICO -->
-    <div class="tab-content" id="tab-historico">
-      <div class="section-header">
-        <div class="section-title">Histórico de ativações</div>
-        <button class="btn btn-ghost btn-sm" onclick="loadHistorico()">↻ Atualizar</button>
+    <!-- PROPAGANDAS -->
+    <div class="tc" id="tc-pr">
+      <div class="bcard">
+        <div class="stitle" style="margin-bottom:6px">🚀 Disparar propaganda agora</div>
+        <div class="binfo">Envia imediatamente para os dois canais (streamflixofc + streamflixvip).</div>
+        <textarea id="pr-manual" placeholder="Deixe vazio para usar a próxima da fila automática..."></textarea>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn bp" onclick="dispararPR()">🚀 Disparar agora</button>
+          <span id="pr-st" style="font-size:12px;color:var(--mut)"></span>
+        </div>
       </div>
-      <div id="hist-list"><div class="empty">Carregando...</div></div>
+
+      <div class="sh">
+        <div class="stitle">📋 Mensagens na fila</div>
+        <button class="btn bp bsm" onclick="openProMod()">+ Nova</button>
+      </div>
+      <div class="binfo" style="margin-bottom:10px">
+        Bot posta automaticamente às <b>10h, 15h e 19h</b> (Brasília) nos dois canais.
+        Se não houver mensagens personalizadas, usa as 5 fixas em rotação.
+      </div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Fixas padrão</div>
+      <div id="pr-fixas"></div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px">Personalizadas</div>
+      <div id="pr-custom"><div class="empty">Nenhuma ainda — usando as fixas.</div></div>
+    </div>
+
+    <!-- HISTORICO -->
+    <div class="tc" id="tc-hi">
+      <div class="sh">
+        <div class="stitle">Histórico de ativações</div>
+        <button class="btn bgh bsm" onclick="loadHi()">↻</button>
+      </div>
+      <div id="hi-list"><div class="empty">Carregando...</div></div>
     </div>
 
     <!-- COMANDOS -->
-    <div class="tab-content" id="tab-comandos">
-      <div class="cmd-group">
-        <div class="cmd-group-title">👤 Gestão de clientes</div>
-        <div class="cmd-item"><div class="cmd-syntax">/gerar [qtd]</div><div class="cmd-desc">Gera tokens de 30 dias. Ex: /gerar 3</div></div>
-        <div class="cmd-item"><div class="cmd-syntax">/clientes</div><div class="cmd-desc">Lista todos os clientes com status e validade.</div></div>
-        <div class="cmd-item"><div class="cmd-syntax">/renovar CHAT_ID</div><div class="cmd-desc">Renova acesso por mais 30 dias.</div></div>
-        <div class="cmd-item"><div class="cmd-syntax">/revogar CHAT_ID</div><div class="cmd-desc">Revoga acesso imediatamente.</div></div>
-        <div class="cmd-item"><div class="cmd-syntax">/stats</div><div class="cmd-desc">Resumo: ativos, expirados, tokens livres, receita.</div></div>
+    <div class="tc" id="tc-cm">
+      <div class="cgrp">
+        <div class="cgtitle">👤 Gestão de clientes</div>
+        <div class="citem"><div class="csyn">/gerar [qtd]</div><div class="cdesc">Gera tokens de 30 dias. Ex: /gerar 3</div></div>
+        <div class="citem"><div class="csyn">/clientes</div><div class="cdesc">Lista todos os clientes com status e validade.</div></div>
+        <div class="citem"><div class="csyn">/renovar CHAT_ID</div><div class="cdesc">Renova acesso por mais 30 dias.</div></div>
+        <div class="citem"><div class="csyn">/revogar CHAT_ID</div><div class="cdesc">Revoga acesso imediatamente.</div></div>
+        <div class="citem"><div class="csyn">/stats</div><div class="cdesc">Resumo: ativos, expirados, tokens livres, receita.</div></div>
       </div>
-      <div class="cmd-group">
-        <div class="cmd-group-title">⚙️ Configurar cliente</div>
-        <div class="cmd-item"><div class="cmd-syntax">/setmodo CHAT_ID completo|basico</div><div class="cmd-desc">Define o modo de acesso do cliente.</div></div>
-        <div class="cmd-item"><div class="cmd-syntax">/setsite CHAT_ID URL</div><div class="cmd-desc">Define site personalizado no rodapé.</div></div>
-        <div class="cmd-item"><div class="cmd-syntax">/setsite CHAT_ID remover</div><div class="cmd-desc">Remove o site personalizado.</div></div>
+      <div class="cgrp">
+        <div class="cgtitle">⚙️ Configurar cliente</div>
+        <div class="citem"><div class="csyn">/setmodo CHAT_ID completo|basico</div><div class="cdesc">Define o modo de acesso do cliente.</div></div>
+        <div class="citem"><div class="csyn">/setsite CHAT_ID URL</div><div class="cdesc">Define site personalizado no rodapé.</div></div>
+        <div class="citem"><div class="csyn">/setsite CHAT_ID remover</div><div class="cdesc">Remove o site personalizado.</div></div>
       </div>
-      <div class="cmd-group">
-        <div class="cmd-group-title">📡 Envio manual</div>
-        <div class="cmd-item"><div class="cmd-syntax">/cartaz</div><div class="cmd-desc">Posta filmes em cartaz para todos os clientes ativos.</div></div>
-        <div class="cmd-item"><div class="cmd-syntax">/trending</div><div class="cmd-desc">Posta trending da semana para todos os clientes ativos.</div></div>
+      <div class="cgrp">
+        <div class="cgtitle">📡 Envio manual</div>
+        <div class="citem"><div class="csyn">/cartaz</div><div class="cdesc">Posta filmes em cartaz para todos os clientes ativos.</div></div>
+        <div class="citem"><div class="csyn">/trending</div><div class="cdesc">Posta trending da semana para todos os clientes ativos.</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <div class="modal-title" id="modal-title">Adicionar cliente</div>
-    <div class="modal-field">
-      <div class="modal-label">Chat ID do cliente</div>
-      <input class="inp" id="m-chatid" type="text" placeholder="-1001234567890" />
+<!-- MODAL CLIENTE -->
+<div class="mov" id="mod-cl">
+  <div class="mbox">
+    <div class="mtitle" id="mod-cl-title">Adicionar cliente</div>
+    <div class="mfld"><div class="mlbl">Chat ID</div><input class="inp" id="m-cid" placeholder="-1001234567890"/></div>
+    <div class="mfld" id="m-tkfld"><div class="mlbl">Token SF-XXXXXXXXXX</div><input class="inp" id="m-tok" placeholder="SF-XXXXXXXXXX"/></div>
+    <div class="mfld"><div class="mlbl">Modo</div>
+      <select class="inp" id="m-modo"><option value="completo">Completo</option><option value="basico">Básico</option></select>
     </div>
-    <div class="modal-field" id="m-token-field">
-      <div class="modal-label">Token de acesso</div>
-      <input class="inp" id="m-token" type="text" placeholder="SF-XXXXXXXXXX" />
+    <div class="mfld"><div class="mlbl">Site personalizado (opcional)</div><input class="inp" id="m-site" placeholder="https://..."/></div>
+    <div class="merr" id="mod-cl-err"></div>
+    <div class="mact">
+      <button class="btn bgh" onclick="closeMod('cl')">Cancelar</button>
+      <button class="btn bp" onclick="modConfirm()" id="mod-cl-ok">Confirmar</button>
     </div>
-    <div class="modal-field">
-      <div class="modal-label">Modo</div>
-      <select class="inp" id="m-modo">
-        <option value="completo">Completo</option>
-        <option value="basico">Básico</option>
-      </select>
+  </div>
+</div>
+
+<!-- MODAL PROPAGANDA -->
+<div class="mov" id="mod-pr">
+  <div class="mbox">
+    <div class="mtitle">Nova mensagem de propaganda</div>
+    <div class="binfo" style="margin-bottom:8px">Use <b>{contato}</b> para inserir seu @ automaticamente.</div>
+    <div class="mfld">
+      <textarea class="inp" id="m-pr-txt" rows="6" style="resize:vertical"
+        placeholder="🎬 Transforme seu canal! Fale: {contato}"></textarea>
     </div>
-    <div class="modal-field">
-      <div class="modal-label">Site personalizado (opcional)</div>
-      <input class="inp" id="m-site" type="text" placeholder="https://seusite.com" />
-    </div>
-    <div class="modal-err" id="modal-err"></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="modalConfirm()" id="modal-confirm-btn">Confirmar</button>
+    <div class="merr" id="mod-pr-err"></div>
+    <div class="mact">
+      <button class="btn bgh" onclick="closeMod('pr')">Cancelar</button>
+      <button class="btn bp" onclick="salvarPR()">Salvar</button>
     </div>
   </div>
 </div>
@@ -371,39 +359,35 @@
 <div id="toast"></div>
 
 <script>
-let API='', PASS='', currentTab='clientes', modalMode='add', editChatId=null;
-let allClientes=[], tokenFilter='livres', allTokens=[];
-let refreshTimer=null;
+let API='',PASS='',modMode='add',editCid=null,tkFilter='livres',allCl=[],allTk=[];
+let autoTimer=null;
 
-// ── LOGIN ──────────────────────────────────────────────────────────────────
+// LOGIN
 async function doLogin(){
   const api=document.getElementById('inp-api').value.trim().replace(/\/$/,'');
   const pass=document.getElementById('inp-pass').value.trim();
-  if(!api||!pass){showLoginErr('Preencha todos os campos.');return}
-  const btn=document.querySelector('.btn-login');
+  if(!api||!pass){showLE('Preencha todos os campos.');return}
+  const btn=document.getElementById('lbtn');
   btn.textContent='Verificando...';btn.disabled=true;
   try{
     const r=await fetch(`${api}/admin?cmd=stats&pass=${encodeURIComponent(pass)}`);
-    if(r.status===403){showLoginErr('Senha incorreta.');btn.textContent='Entrar';btn.disabled=false;return}
-    if(!r.ok){showLoginErr(`Erro ao conectar (${r.status}).`);btn.textContent='Entrar';btn.disabled=false;return}
-  }catch(e){showLoginErr('Não foi possível conectar. Verifique a URL.');btn.textContent='Entrar';btn.disabled=false;return}
+    if(r.status===403){showLE('Senha incorreta.');btn.textContent='Entrar';btn.disabled=false;return}
+    if(!r.ok){showLE(`Erro ao conectar (${r.status}).`);btn.textContent='Entrar';btn.disabled=false;return}
+  }catch(e){showLE('Não foi possível conectar. Verifique a URL.');btn.textContent='Entrar';btn.disabled=false;return}
   API=api;PASS=pass;
   localStorage.setItem('sf_api',api);localStorage.setItem('sf_pass',pass);
   btn.textContent='Entrar';btn.disabled=false;
-  initApp();
+  startApp();
 }
-
+function showLE(m){document.getElementById('lerr').textContent=m}
 function logout(){
-  localStorage.removeItem('sf_pass');
-  clearInterval(refreshTimer);
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('app-screen').style.display='none';
+  localStorage.removeItem('sf_pass');clearInterval(autoTimer);
+  document.getElementById('login').style.display='flex';
+  document.getElementById('app').style.display='none';
 }
 
-function showLoginErr(msg){document.getElementById('login-err').textContent=msg}
-
-// ── API ────────────────────────────────────────────────────────────────────
-async function apicall(cmd){
+// API
+async function api(cmd){
   try{
     const r=await fetch(`${API}/admin?cmd=${encodeURIComponent(cmd)}&pass=${encodeURIComponent(PASS)}`);
     if(!r.ok)return{error:`HTTP ${r.status}`};
@@ -411,269 +395,307 @@ async function apicall(cmd){
   }catch(e){return{error:e.message}}
 }
 
-// ── INIT ───────────────────────────────────────────────────────────────────
-function initApp(){
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app-screen').style.display='flex';
-  document.getElementById('header-api').textContent=API.replace('https://','');
+// INIT
+function startApp(){
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='flex';
+  document.getElementById('hapi').textContent=API.replace('https://','');
   loadAll();
-  clearInterval(refreshTimer);
-  refreshTimer=setInterval(()=>{loadStats();},30000); // auto-refresh a cada 30s
+  clearInterval(autoTimer);
+  autoTimer=setInterval(loadStats,30000);
 }
 
 async function loadAll(){
   await loadStats();
-  await loadClientes();
-  await loadTokens();
-  await loadHistorico();
+  await loadCl();
+  await loadTk();
+  await loadHi();
+  await loadPR();
 }
 
-// ── STATS ──────────────────────────────────────────────────────────────────
+// STATS
 async function loadStats(){
-  const d=await apicall('stats');
+  const d=await api('stats');
   if(d.error)return;
-  document.getElementById('s-ativos').textContent=d.ativos??'—';
-  document.getElementById('s-exp').textContent=d.expirados??'—';
-  document.getElementById('s-tokens').textContent=d.tokens_livres??'—';
-  document.getElementById('s-receita').textContent=d.receita?`R$ ${d.receita}`:'—';
-  document.getElementById('broadcast-info').textContent=
-    `Será enviado para ${d.ativos??0} cliente(s) ativo(s).`;
+  document.getElementById('s-at').textContent=d.ativos??'0';
+  // compatível com "expirados" e "inativos"
+  const exp=d.expirados??d.inativos??'—';
+  document.getElementById('s-ex').textContent=exp;
+  document.getElementById('s-tk').textContent=d.tokens_livres??'0';
+  document.getElementById('s-rc').textContent=d.receita?`R$ ${d.receita}`:'—';
+  document.getElementById('bc-info').textContent=`Será enviado para ${d.ativos??0} cliente(s) ativo(s).`;
 }
 
-// ── CLIENTES ───────────────────────────────────────────────────────────────
-async function loadClientes(){
-  const tbody=document.getElementById('tbody-clientes');
-  const d=await apicall('clientes');
+// CLIENTES
+async function loadCl(){
+  const d=await api('clientes');
   if(d.error||!d.clientes){
-    tbody.innerHTML=`<tr><td colspan="7" class="empty">Erro: ${d.error}</td></tr>`;return;
+    document.getElementById('cl-list').innerHTML=`<div class="empty">Erro: ${d.error||'sem dados'}</div>`;return;
   }
-  allClientes=d.clientes;
-  renderClientes(allClientes);
+  allCl=d.clientes;renderCl(allCl);
 }
 
-function renderClientes(list){
-  const tbody=document.getElementById('tbody-clientes');
-  if(!list.length){tbody.innerHTML='<tr><td colspan="7" class="empty">Nenhum cliente cadastrado.</td></tr>';return}
-  tbody.innerHTML=list.map(c=>{
-    const dias=c.dias_rest;
-    const ativo=c.ativo&&dias>=0;
-    const badge=ativo
-      ?`<span class="badge badge-green">● Ativo</span>`
-      :`<span class="badge badge-red">● Expirado</span>`;
-    const diasColor=dias>7?'green':dias>0?'yellow':'red';
-    const siteDisplay=c.site_url
-      ?`<a href="${c.site_url}" target="_blank" style="color:var(--accent2);font-size:11px">${c.site_url.replace('https://','')}</a>`
-      :`<span style="color:var(--muted);font-size:11px">—</span>`;
-    return `<tr>
-      <td>${badge}</td>
-      <td class="mono">${c.chat_id}</td>
-      <td style="font-size:12px">${c.validade||'—'}</td>
-      <td><span style="color:var(--${diasColor});font-weight:600">${dias>=0?dias+'d':'—'}</span></td>
-      <td><span style="font-size:12px">${c.modo||'completo'}</span></td>
-      <td>${siteDisplay}</td>
-      <td><div class="actions-cell">
-        <button class="btn btn-green btn-sm" onclick="renovar(${c.chat_id})">↻ Renovar</button>
-        <button class="btn btn-yellow btn-sm" onclick="openEdit(${c.chat_id},'${c.modo||'completo'}','${c.site_url||''}')">✏️ Config</button>
-        <button class="btn btn-red btn-sm" onclick="revogar(${c.chat_id})">✕ Revogar</button>
-      </div></td>
-    </tr>`;
+function renderCl(list){
+  const el=document.getElementById('cl-list');
+  if(!list.length){el.innerHTML='<div class="empty">Nenhum cliente cadastrado.</div>';return}
+  el.innerHTML=list.map(c=>{
+    const ok=c.ativo&&(c.dias_rest??-1)>=0;
+    const dias=c.dias_rest??-1;
+    const dcol=dias>7?'g':dias>0?'y':'r';
+    const site=c.site_url?`<a href="${c.site_url}" target="_blank" style="color:var(--ora);font-size:11px">${c.site_url.replace('https://','')}</a>`:'—';
+    return `<div class="ccard">
+      <div class="ccard-top">
+        <span class="badge ${ok?'bg-g':'bg-r'}">${ok?'● Ativo':'● Expirado'}</span>
+        <span class="cid">${c.chat_id}</span>
+      </div>
+      <div class="cinfo">
+        <div class="ci">Validade: <span>${c.validade||'—'}</span></div>
+        <div class="ci">Dias: <span style="color:var(--${dcol})">${dias>=0?dias+'d':'—'}</span></div>
+        <div class="ci">Modo: <span>${c.modo||'completo'}</span></div>
+        <div class="ci">Site: <span>${site}</span></div>
+      </div>
+      <div class="cacts">
+        <button class="btn bg2 bsm" onclick="renovar(${c.chat_id})">↻ Renovar</button>
+        <button class="btn by bsm" onclick="openEdit(${c.chat_id},'${c.modo||'completo'}','${c.site_url||''}')">✏️ Config</button>
+        <button class="btn br bsm" onclick="revogar(${c.chat_id})">✕ Revogar</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
-function filterClientes(){
-  const q=document.getElementById('search-clientes').value.trim().toLowerCase();
-  if(!q){renderClientes(allClientes);return}
-  renderClientes(allClientes.filter(c=>String(c.chat_id).includes(q)));
+function filterCl(q){
+  if(!q){renderCl(allCl);return}
+  renderCl(allCl.filter(c=>String(c.chat_id).includes(q.trim())));
 }
 
-async function renovar(chatId){
-  const d=await apicall(`renovar:${chatId}`);
-  if(d.ok){toast(`✅ Renovado até ${d.validade}`);loadAll();}
+async function renovar(cid){
+  const d=await api(`renovar:${cid}`);
+  if(d.ok){toast('✅ Renovado até '+d.validade);loadAll();}
   else toast('❌ Erro ao renovar');
 }
-
-async function revogar(chatId){
-  if(!confirm(`Revogar acesso de ${chatId}?`))return;
-  const d=await apicall(`revogar:${chatId}`);
-  if(d.ok){toast('✅ Acesso revogado');loadAll();}
-  else toast('❌ Erro ao revogar');
+async function revogar(cid){
+  if(!confirm(`Revogar ${cid}?`))return;
+  const d=await api(`revogar:${cid}`);
+  if(d.ok){toast('✅ Revogado');loadAll();}
+  else toast('❌ Erro');
 }
 
-// ── TOKENS ─────────────────────────────────────────────────────────────────
-async function loadTokens(){
-  const d=await apicall('tokens_lista');
-  if(d.error||!d.tokens){
-    // fallback: lista vazia
-    allTokens=[];renderTokens();return;
-  }
-  allTokens=d.tokens;
-  renderTokens();
+// TOKENS
+async function loadTk(){
+  const d=await api('tokens_lista');
+  if(d.error||!d.tokens){allTk=[];renderTk();return}
+  allTk=d.tokens;renderTk();
 }
 
-function setTokenFilter(f){
-  tokenFilter=f;
+function setTkFilter(f){
+  tkFilter=f;
   ['livres','usados','todos'].forEach(x=>{
-    const btn=document.getElementById(`btn-filter-${x}`);
-    if(x===f){btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';}
-    else{btn.style.borderColor='';btn.style.color='';}
+    const b=document.getElementById(`fb-${x}`);
+    b.classList.toggle('on',x===f);
   });
-  renderTokens();
+  renderTk();
 }
 
-function renderTokens(){
-  const list=document.getElementById('token-list');
-  let tokens=allTokens;
-  if(tokenFilter==='livres')tokens=tokens.filter(t=>!t.usado);
-  else if(tokenFilter==='usados')tokens=tokens.filter(t=>t.usado);
-  if(!tokens.length){list.innerHTML=`<div class="empty">${tokenFilter==='livres'?'Nenhum token livre. Gere novos acima.':'Nenhum token encontrado.'}</div>`;return}
-  list.innerHTML=tokens.map(t=>`
-    <div class="token-item ${t.usado?'used':''}">
-      <div>
-        <div class="token-code">${t.token}</div>
-        <div class="token-meta">${t.usado?'✅ Usado':'🟡 Disponível'} · ${t.criado_em||''}</div>
-      </div>
-      <div class="token-actions">
-        ${!t.usado?`<button class="btn-copy" onclick="copyToken(this,'${t.token}')">📋 Copiar</button>`:''}
-      </div>
-    </div>`).join('');
-}
-
-async function gerarTokens(){
-  const qtd=parseInt(document.getElementById('qtd-tokens').value);
-  const d=await apicall(`gerar:${qtd}`);
-  if(d.error||!d.tokens){toast('❌ Erro ao gerar tokens');return}
-  toast(`✅ ${d.tokens.length} token(s) gerado(s)!`);
-  await loadTokens();
-  setTokenFilter('livres');
-  switchTab('tokens');
-}
-
-function copyToken(btn,txt){
-  navigator.clipboard.writeText(txt).then(()=>{
-    btn.textContent='✅ Copiado!';btn.classList.add('copied');
-    setTimeout(()=>{btn.textContent='📋 Copiar';btn.classList.remove('copied')},2000);
-  });
-}
-
-// ── BROADCAST ─────────────────────────────────────────────────────────────
-async function enviarBroadcast(){
-  const msg=document.getElementById('broadcast-msg').value.trim();
-  if(!msg){toast('⚠️ Digite uma mensagem');return}
-  if(!confirm('Enviar essa mensagem para TODOS os clientes ativos?'))return;
-  document.getElementById('broadcast-status').textContent='Enviando...';
-  const d=await apicall(`broadcast:${encodeURIComponent(msg)}`);
-  if(d.ok){
-    toast(`✅ Enviado para ${d.enviados||0} cliente(s)`);
-    document.getElementById('broadcast-msg').value='';
-    document.getElementById('broadcast-status').textContent='';
-  }else{
-    toast('❌ Erro: '+( d.error||'desconhecido'));
-    document.getElementById('broadcast-status').textContent='';
+function renderTk(){
+  const el=document.getElementById('tk-list');
+  let list=allTk;
+  if(tkFilter==='livres')list=list.filter(t=>!t.usado);
+  else if(tkFilter==='usados')list=list.filter(t=>t.usado);
+  if(!list.length){
+    el.innerHTML=`<div class="empty">${tkFilter==='livres'?'Nenhum token livre. Gere acima.':'Nenhum token.'}</div>`;return;
   }
+  el.innerHTML=list.map(t=>`
+    <div class="tkitem ${t.usado?'used':''}">
+      <div>
+        <div class="tkcode">${t.token}</div>
+        <div class="tkmeta">${t.usado?'✅ Usado':'🟡 Livre'} · ${t.criado_em||''}</div>
+      </div>
+      ${!t.usado?`<button class="cpbtn" onclick="cpTk(this,'${t.token}')">📋 Copiar</button>`:''}
+    </div>`).join('');
 }
 
-// ── HISTORICO ─────────────────────────────────────────────────────────────
-async function loadHistorico(){
-  const d=await apicall('historico');
-  const list=document.getElementById('hist-list');
-  if(d.error||!d.historico){list.innerHTML=`<div class="empty">Sem histórico disponível.</div>`;return}
-  if(!d.historico.length){list.innerHTML='<div class="empty">Nenhuma ativação registrada ainda.</div>';return}
-  list.innerHTML=d.historico.map(h=>`
-    <div class="hist-item">
-      <div class="hist-icon">🟢</div>
+async function gerarTk(){
+  const qtd=document.getElementById('qtk').value;
+  const d=await api(`gerar:${qtd}`);
+  if(d.error||!d.tokens){toast('❌ Erro ao gerar');return}
+  toast(`✅ ${d.tokens.length} token(s) gerado(s)!`);
+  await loadTk();await loadStats();
+  setTkFilter('livres');
+}
+
+function cpTk(btn,txt){
+  navigator.clipboard.writeText(txt).then(()=>{
+    btn.textContent='✅ Copiado!';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='📋 Copiar';btn.classList.remove('ok')},2000);
+  });
+}
+
+// BROADCAST
+async function enviarBC(){
+  const msg=document.getElementById('bc-msg').value.trim();
+  if(!msg){toast('⚠️ Digite uma mensagem');return}
+  if(!confirm('Enviar para TODOS os clientes ativos?'))return;
+  document.getElementById('bc-st').textContent='Enviando...';
+  const d=await api(`broadcast:${encodeURIComponent(msg)}`);
+  if(d.ok){toast(`✅ Enviado para ${d.enviados||0} cliente(s)`);document.getElementById('bc-msg').value='';}
+  else toast('❌ Erro: '+(d.error||'?'));
+  document.getElementById('bc-st').textContent='';
+}
+
+// HISTORICO
+async function loadHi(){
+  const d=await api('historico');
+  const el=document.getElementById('hi-list');
+  if(d.error||!d.historico){el.innerHTML='<div class="empty">Sem histórico.</div>';return}
+  if(!d.historico.length){el.innerHTML='<div class="empty">Nenhuma ativação ainda.</div>';return}
+  el.innerHTML=d.historico.map(h=>`
+    <div class="hitem">
+      <div class="hico">🟢</div>
       <div>
-        <div class="hist-text">Chat ID <span class="mono">${h.chat_id}</span> ativou com token <span class="mono">${h.token||'—'}</span></div>
-        <div class="hist-time">${h.criado_em||''} · Válido até ${h.validade||'—'}</div>
+        <div class="htxt">Chat ID <b>${h.chat_id}</b> ativou token <b>${h.token||'—'}</b></div>
+        <div class="htime">${h.criado_em||''} · até ${h.validade||'—'}</div>
       </div>
     </div>`).join('');
 }
 
-// ── MODAL ──────────────────────────────────────────────────────────────────
-function openModal(mode){
-  modalMode='add';editChatId=null;
-  document.getElementById('modal-title').textContent='Adicionar cliente';
-  document.getElementById('m-chatid').value='';document.getElementById('m-chatid').disabled=false;
-  document.getElementById('m-token').value='';
-  document.getElementById('m-token-field').style.display='block';
+// PROPAGANDAS
+async function loadPR(){
+  const d=await api('propagandas_lista');
+  const felEl=document.getElementById('pr-fixas');
+  const cusEl=document.getElementById('pr-custom');
+  if(d.error){felEl.innerHTML='';cusEl.innerHTML='<div class="empty">Bot sem suporte a propagandas ainda. Suba o bot.py atualizado.</div>';return}
+  if(d.fixas&&d.fixas.length){
+    felEl.innerHTML=d.fixas.map((t,i)=>`
+      <div class="pitem">
+        <div class="pmeta">Mensagem fixa ${i+1}</div>
+        <div class="ptxt">${t.replace(/\n/g,'<br>').replace(/\{contato\}/g,'<b>@RaffDimitri</b>')}</div>
+      </div>`).join('');
+  }
+  if(!d.propagandas||!d.propagandas.length){
+    cusEl.innerHTML='<div class="empty">Nenhuma personalizada — usando as fixas.</div>';return;
+  }
+  cusEl.innerHTML=d.propagandas.map(p=>`
+    <div class="pitem">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div>
+          <div class="pmeta">#${p.id} · ${p.criado_em}</div>
+          <div class="ptxt">${p.texto.replace(/\n/g,'<br>')}</div>
+        </div>
+        <button class="btn br bsm" onclick="delPR(${p.id})" style="flex-shrink:0">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+async function dispararPR(){
+  const txt=document.getElementById('pr-manual').value.trim();
+  document.getElementById('pr-st').textContent='Enviando...';
+  const cmd=txt?`propaganda_disparo:${encodeURIComponent(txt)}`:'propaganda_disparo:';
+  const d=await api(cmd);
+  if(d.ok){toast(`✅ Enviado para ${d.enviados} canal(is)!`);document.getElementById('pr-manual').value='';}
+  else toast('❌ Erro: '+(d.error||'Bot precisa ser atualizado'));
+  document.getElementById('pr-st').textContent='';
+}
+
+function openProMod(){
+  document.getElementById('m-pr-txt').value='';
+  document.getElementById('mod-pr-err').textContent='';
+  document.getElementById('mod-pr').classList.add('on');
+}
+
+async function salvarPR(){
+  const txt=document.getElementById('m-pr-txt').value.trim();
+  if(!txt){document.getElementById('mod-pr-err').textContent='⚠️ Digite a mensagem.';return}
+  const d=await api(`propaganda_add:${encodeURIComponent(txt)}`);
+  if(d.ok){toast('✅ Salva!');closeMod('pr');loadPR();}
+  else toast('❌ Erro ao salvar — atualize o bot.py');
+}
+
+async function delPR(pid){
+  if(!confirm('Remover?'))return;
+  const d=await api(`propaganda_del:${pid}`);
+  if(d.ok){toast('✅ Removida');loadPR();}
+  else toast('❌ Erro');
+}
+
+// MODAL
+function openMod(mode){
+  modMode='add';editCid=null;
+  document.getElementById('mod-cl-title').textContent='Adicionar cliente';
+  document.getElementById('m-cid').value='';document.getElementById('m-cid').disabled=false;
+  document.getElementById('m-tok').value='';
+  document.getElementById('m-tkfld').style.display='block';
   document.getElementById('m-modo').value='completo';
   document.getElementById('m-site').value='';
-  document.getElementById('modal-err').textContent='';
-  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('mod-cl-err').textContent='';
+  document.getElementById('mod-cl').classList.add('on');
 }
-
-function openEdit(chatId,modo,siteUrl){
-  modalMode='edit';editChatId=chatId;
-  document.getElementById('modal-title').textContent='Configurar cliente';
-  document.getElementById('m-chatid').value=chatId;document.getElementById('m-chatid').disabled=true;
-  document.getElementById('m-token-field').style.display='none';
+function openEdit(cid,modo,site){
+  modMode='edit';editCid=cid;
+  document.getElementById('mod-cl-title').textContent='Configurar cliente';
+  document.getElementById('m-cid').value=cid;document.getElementById('m-cid').disabled=true;
+  document.getElementById('m-tkfld').style.display='none';
   document.getElementById('m-modo').value=modo||'completo';
-  document.getElementById('m-site').value=siteUrl||'';
-  document.getElementById('modal-err').textContent='';
-  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('m-site').value=site||'';
+  document.getElementById('mod-cl-err').textContent='';
+  document.getElementById('mod-cl').classList.add('on');
 }
+function closeMod(id){document.getElementById(`mod-${id}`).classList.remove('on')}
 
-function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
-
-async function modalConfirm(){
-  const msg=document.getElementById('modal-err');
-  msg.textContent='';
-  const btn=document.getElementById('modal-confirm-btn');
-  btn.disabled=true;btn.textContent='Salvando...';
-
-  if(modalMode==='add'){
-    const chatId=document.getElementById('m-chatid').value.trim();
-    const token=document.getElementById('m-token').value.trim().toUpperCase();
+async function modConfirm(){
+  const err=document.getElementById('mod-cl-err');err.textContent='';
+  const btn=document.getElementById('mod-cl-ok');btn.disabled=true;btn.textContent='Salvando...';
+  if(modMode==='add'){
+    const cid=document.getElementById('m-cid').value.trim();
+    const tok=document.getElementById('m-tok').value.trim().toUpperCase();
     const modo=document.getElementById('m-modo').value;
     const site=document.getElementById('m-site').value.trim();
-    if(!chatId||!token){msg.textContent='⚠️ Preencha Chat ID e Token.';btn.disabled=false;btn.textContent='Confirmar';return}
-    const d=await apicall(`ativar:${chatId}:${token}`);
-    if(!d.ok){msg.textContent='❌ '+(d.error||'Erro ao ativar');btn.disabled=false;btn.textContent='Confirmar';return}
-    if(modo!=='completo')await apicall(`config_modo:${chatId}:${modo}`);
-    if(site)await apicall(`config_site:${chatId}:${encodeURIComponent(site)}`);
+    if(!cid||!tok){err.textContent='⚠️ Preencha Chat ID e Token.';btn.disabled=false;btn.textContent='Confirmar';return}
+    const d=await api(`ativar:${cid}:${tok}`);
+    if(!d.ok){err.textContent='❌ '+(d.error||'Erro');btn.disabled=false;btn.textContent='Confirmar';return}
+    if(modo!=='completo')await api(`config_modo:${cid}:${modo}`);
+    if(site)await api(`config_site:${cid}:${encodeURIComponent(site)}`);
     toast('✅ Cliente ativado!');
   }else{
     const modo=document.getElementById('m-modo').value;
     const site=document.getElementById('m-site').value.trim();
-    await apicall(`config_modo:${editChatId}:${modo}`);
-    await apicall(`config_site:${editChatId}:${encodeURIComponent(site||'remover')}`);
+    await api(`config_modo:${editCid}:${modo}`);
+    await api(`config_site:${editCid}:${encodeURIComponent(site||'remover')}`);
     toast('✅ Configurações salvas!');
   }
   btn.disabled=false;btn.textContent='Confirmar';
-  closeModal();loadAll();
+  closeMod('cl');loadAll();
 }
 
-// ── TABS ───────────────────────────────────────────────────────────────────
-function switchTab(name){
-  const names=['clientes','tokens','broadcast','historico','comandos'];
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
-  document.querySelectorAll('.tab-content').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
-  currentTab=name;
-  if(name==='historico')loadHistorico();
-  if(name==='tokens')loadTokens();
+// TABS
+const TABS=['cl','tk','bc','pr','hi','cm'];
+function goTab(id){
+  TABS.forEach((t,i)=>{
+    document.querySelectorAll('.tab')[i].classList.toggle('on',t===id);
+    document.getElementById(`tc-${t}`).classList.toggle('on',t===id);
+  });
+  if(id==='hi')loadHi();
+  if(id==='tk')loadTk();
+  if(id==='pr')loadPR();
 }
 
-// ── TOAST ──────────────────────────────────────────────────────────────────
+// TOAST
 function toast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
+  t.textContent=msg;t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),3000);
 }
 
-// ── AUTO LOGIN ─────────────────────────────────────────────────────────────
-window.addEventListener('load',()=>{
-  const api=localStorage.getItem('sf_api');
-  const pass=localStorage.getItem('sf_pass');
-  if(api&&pass){
-    document.getElementById('inp-api').value=api;
-    document.getElementById('inp-pass').value=pass;
-    API=api;PASS=pass;
-    initApp();
-  }
+// FECHAR MODAL
+['mod-cl','mod-pr'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this)this.classList.remove('on');
+  });
 });
 
-// Fechar modal clicando fora
-document.getElementById('modal-overlay').addEventListener('click',function(e){
-  if(e.target===this)closeModal();
+// AUTO LOGIN
+window.addEventListener('load',()=>{
+  const a=localStorage.getItem('sf_api'),p=localStorage.getItem('sf_pass');
+  if(a&&p){document.getElementById('inp-api').value=a;document.getElementById('inp-pass').value=p;API=a;PASS=p;startApp();}
 });
 </script>
 </body>
