@@ -8,7 +8,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{
   --bg:#0a0a0f;--sur:#12121a;--card:#1a1a26;--bor:#2a2a3a;
-  --acc:#e50914;--grn:#00c896;--yel:#f5a623;--ora:#ff6b35;
+  --acc:#e50914;--grn:#00c896;--yel:#f5a623;--ora:#ff6b35;--blu:#4a9eff;
   --txt:#e8e8f0;--mut:#6b6b80;--mono:'JetBrains Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -31,6 +31,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 .bg2{background:#0d4f3c;color:var(--grn);border:1px solid #1a6b50}.bg2:hover{background:#0f5f48}
 .by{background:#4f3a0d;color:var(--yel);border:1px solid #6b5010}.by:hover{background:#5f4510}
 .br{background:#4f0d0d;color:var(--acc);border:1px solid #6b1010}.br:hover{background:#5f1010}
+.bbl{background:#0d2a4f;color:var(--blu);border:1px solid #1a4070}.bbl:hover{background:#0f3560}
 .bgh{background:transparent;color:var(--mut);border:1px solid var(--bor)}.bgh:hover{color:var(--txt);border-color:var(--txt)}
 .bsm{padding:6px 11px;font-size:12px}
 .bfull{width:100%;padding:13px;font-size:15px;border-radius:10px;margin-top:4px}
@@ -43,11 +44,10 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 .hlogo{font-size:14px;font-weight:700}.hlogo span{color:var(--acc)}
 .hright{display:flex;align-items:center;gap:8px}
 .hapi{font-size:10px;color:var(--mut);font-family:var(--mono);
-  max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rdot{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 2s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* MAIN */
 .main{flex:1;padding:14px;max-width:860px;margin:0 auto;width:100%}
 
 /* STATS */
@@ -74,44 +74,54 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 .stitle{font-size:13px;font-weight:700}
 .sact{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 
+/* FILTROS */
+.frow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.fbtn{padding:5px 12px;font-size:11px;font-weight:600;border-radius:100px;cursor:pointer;
+  background:transparent;border:1px solid var(--bor);color:var(--mut);transition:.15s}
+.fbtn.on{border-color:var(--acc);color:var(--acc)}
+
 /* SEARCH */
 .swrap{position:relative}
 .swrap input{background:var(--bg);border:1px solid var(--bor);border-radius:7px;
-  padding:7px 10px 7px 28px;color:var(--txt);font-size:12px;outline:none;width:150px}
+  padding:7px 10px 7px 28px;color:var(--txt);font-size:12px;outline:none;width:160px}
 .swrap input:focus{border-color:var(--acc)}
 .sico{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:12px}
 
-/* CARDS DE CLIENTE */
+/* CARDS CLIENTE */
 .clist{display:flex;flex-direction:column;gap:8px}
-.ccard{background:var(--card);border:1px solid var(--bor);border-radius:10px;padding:12px}
-.ccard-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;
-  font-size:11px;font-weight:600;flex-shrink:0}
+.ccard{background:var(--card);border:1px solid var(--bor);border-radius:10px;padding:12px;transition:.15s}
+.ccard:hover{border-color:#3a3a4a}
+.ccard-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:11px;font-weight:600;flex-shrink:0}
 .bg-g{background:#0d4f3c;color:var(--grn)}
 .bg-r{background:#4f0d0d;color:var(--acc)}
-.bg-y{background:#4f3a0d;color:var(--yel)}
-.cid{font-family:var(--mono);font-size:12px;color:var(--txt);flex:1;overflow:hidden;text-overflow:ellipsis}
-.cinfo{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.cnome{font-size:13px;font-weight:700;flex:1}
+.cnome-ph{font-size:12px;color:var(--mut);font-style:italic;flex:1}
+.cid{font-family:var(--mono);font-size:11px;color:var(--mut)}
+.cinfo{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .ci{font-size:11px;color:var(--mut)}
-.ci span{color:var(--txt);font-weight:600}
+.ci b{color:var(--txt);font-weight:600}
 .cacts{display:flex;gap:6px;flex-wrap:wrap}
-.empty{text-align:center;padding:28px;color:var(--mut);font-size:13px}
 
 /* TOKENS */
 .tklist{display:flex;flex-direction:column;gap:7px}
 .tkitem{background:var(--card);border:1px solid var(--bor);border-radius:8px;
-  padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:.15s}
+.tkitem:hover{border-color:#3a3a4a}
 .tkitem.used{opacity:.4}
 .tkcode{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.5px}
 .tkmeta{font-size:11px;color:var(--mut);margin-top:2px}
+.tkacts{display:flex;gap:5px;flex-shrink:0}
 .cpbtn{background:var(--sur);border:1px solid var(--bor);color:var(--txt);
-  font-size:11px;padding:5px 9px;border-radius:6px;cursor:pointer;transition:.15s;flex-shrink:0}
+  font-size:11px;padding:5px 9px;border-radius:6px;cursor:pointer;transition:.15s}
 .cpbtn:hover{border-color:var(--acc);color:var(--acc)}
 .cpbtn.ok{border-color:var(--grn);color:var(--grn)}
-.frow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.fbtn{padding:5px 12px;font-size:11px;font-weight:600;border-radius:100px;cursor:pointer;
-  background:transparent;border:1px solid var(--bor);color:var(--mut);transition:.15s}
-.fbtn.on{border-color:var(--acc);color:var(--acc)}
+
+/* ADD TOKEN */
+.tk-add-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.tk-add-row input{flex:1;min-width:160px;background:var(--bg);border:1px solid var(--bor);
+  border-radius:7px;padding:8px 12px;color:var(--txt);font-size:13px;font-family:var(--mono);outline:none}
+.tk-add-row input:focus{border-color:var(--grn)}
 .genrow{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
 .genrow select{background:var(--bg);border:1px solid var(--bor);border-radius:7px;
   padding:7px 10px;color:var(--txt);font-size:13px;outline:none}
@@ -126,11 +136,10 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 /* HISTORICO */
 .hitem{background:var(--card);border:1px solid var(--bor);border-radius:8px;
   padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:7px}
-.hico{font-size:16px;flex-shrink:0}
 .htxt{font-size:12px;line-height:1.5}
 .htime{font-size:11px;color:var(--mut)}
 
-/* PROPA ITEMS */
+/* PROPA */
 .pitem{background:var(--card);border:1px solid var(--bor);border-radius:8px;
   padding:10px 12px;margin-bottom:7px}
 .ptxt{font-size:12px;line-height:1.6;margin:4px 0 8px}
@@ -149,12 +158,15 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
   align-items:center;justify-content:center;padding:16px}
 .mov.on{display:flex}
 .mbox{background:var(--sur);border:1px solid var(--bor);border-radius:14px;
-  padding:24px;width:100%;max-width:400px}
+  padding:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
 .mtitle{font-size:16px;font-weight:700;margin-bottom:16px}
 .mfld{margin-bottom:12px}
 .mlbl{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
 .merr{color:var(--acc);font-size:12px;margin-top:6px;min-height:16px}
 .mact{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* EMPTY */
+.empty{text-align:center;padding:28px;color:var(--mut);font-size:13px}
 
 /* TOAST */
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);
@@ -185,7 +197,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
   <div class="hdr">
     <div class="hlogo">Stream<span>Flix</span> <span style="color:var(--mut);font-weight:400">Admin</span></div>
     <div class="hright">
-      <div class="rdot"></div>
+      <div class="rdot" title="Auto-refresh ativo"></div>
       <div class="hapi" id="hapi"></div>
       <button class="btn bgh bsm" onclick="logout()">Sair</button>
     </div>
@@ -217,11 +229,16 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
         <div class="sact">
           <div class="swrap">
             <span class="sico">🔍</span>
-            <input type="text" placeholder="Chat ID..." oninput="filterCl(this.value)"/>
+            <input type="text" placeholder="Nome ou Chat ID..." oninput="filterCl(this.value)"/>
           </div>
           <button class="btn bgh bsm" onclick="loadAll()">↻</button>
           <button class="btn bp bsm" onclick="openMod('add')">+ Adicionar</button>
         </div>
+      </div>
+      <div class="frow">
+        <button class="fbtn on" id="cf-todos" onclick="setClFilter('todos')">Todos</button>
+        <button class="fbtn" id="cf-ativos" onclick="setClFilter('ativos')">✅ Ativos</button>
+        <button class="fbtn" id="cf-exp" onclick="setClFilter('exp')">❌ Expirados</button>
       </div>
       <div class="clist" id="cl-list"><div class="empty">Carregando...</div></div>
     </div>
@@ -229,18 +246,28 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
     <!-- TOKENS -->
     <div class="tc" id="tc-tk">
       <div class="sh"><div class="stitle">Tokens de acesso</div></div>
-      <div class="genrow">
-        <select id="qtk">
-          <option value="1">1 token</option>
-          <option value="3">3 tokens</option>
-          <option value="5">5 tokens</option>
-          <option value="10">10 tokens</option>
-        </select>
-        <button class="btn bp bsm" onclick="gerarTk()">🎟️ Gerar</button>
+
+      <div style="background:var(--card);border:1px solid var(--bor);border-radius:10px;padding:12px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--mut);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Gerar automático</div>
+        <div class="genrow">
+          <select id="qtk">
+            <option value="1">1 token</option>
+            <option value="3">3 tokens</option>
+            <option value="5">5 tokens</option>
+            <option value="10">10 tokens</option>
+          </select>
+          <button class="btn bp bsm" onclick="gerarTk()">🎟️ Gerar</button>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--mut);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Adicionar manual (código personalizado)</div>
+        <div class="tk-add-row">
+          <input type="text" id="tk-manual" placeholder="EX: SF-MEUCODIGO123" style="text-transform:uppercase"/>
+          <button class="btn bg2 bsm" onclick="adicionarTkManual()">+ Adicionar</button>
+        </div>
       </div>
+
       <div class="frow">
-        <button class="fbtn on" id="fb-livres" onclick="setTkFilter('livres')">Livres</button>
-        <button class="fbtn" id="fb-usados" onclick="setTkFilter('usados')">Usados</button>
+        <button class="fbtn on" id="fb-livres" onclick="setTkFilter('livres')">🟡 Livres</button>
+        <button class="fbtn" id="fb-usados" onclick="setTkFilter('usados')">✅ Usados</button>
         <button class="fbtn" id="fb-todos" onclick="setTkFilter('todos')">Todos</button>
       </div>
       <div class="tklist" id="tk-list"><div class="empty">Carregando...</div></div>
@@ -263,28 +290,24 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
     <div class="tc" id="tc-pr">
       <div class="bcard">
         <div class="stitle" style="margin-bottom:6px">🚀 Disparar propaganda agora</div>
-        <div class="binfo">Envia imediatamente para os dois canais (streamflixofc + streamflixvip).</div>
-        <textarea id="pr-manual" placeholder="Deixe vazio para usar a próxima da fila automática..."></textarea>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button class="btn bp" onclick="dispararPR()">🚀 Disparar agora</button>
+        <div class="binfo">Envia imediatamente nos dois canais (streamflixofc + streamflixvip).</div>
+        <textarea id="pr-manual" placeholder="Vazio = usa próxima da fila automática..."></textarea>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn bp" onclick="dispararPR()">🚀 Disparar</button>
           <span id="pr-st" style="font-size:12px;color:var(--mut)"></span>
         </div>
       </div>
-
       <div class="sh">
-        <div class="stitle">📋 Mensagens na fila</div>
+        <div class="stitle">📋 Fila de mensagens</div>
         <button class="btn bp bsm" onclick="openProMod()">+ Nova</button>
       </div>
       <div class="binfo" style="margin-bottom:10px">
-        Bot posta automaticamente às <b>10h, 15h e 19h</b> (Brasília) nos dois canais.
-        Se não houver mensagens personalizadas, usa as 5 fixas em rotação.
+        Automático: <b>10h, 15h e 19h</b> (Brasília). Sem personalizadas → usa as 5 fixas em rotação.
       </div>
-
       <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Fixas padrão</div>
       <div id="pr-fixas"></div>
-
       <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px">Personalizadas</div>
-      <div id="pr-custom"><div class="empty">Nenhuma ainda — usando as fixas.</div></div>
+      <div id="pr-custom"><div class="empty">Nenhuma — usando as fixas.</div></div>
     </div>
 
     <!-- HISTORICO -->
@@ -300,22 +323,22 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
     <div class="tc" id="tc-cm">
       <div class="cgrp">
         <div class="cgtitle">👤 Gestão de clientes</div>
-        <div class="citem"><div class="csyn">/gerar [qtd]</div><div class="cdesc">Gera tokens de 30 dias. Ex: /gerar 3</div></div>
+        <div class="citem"><div class="csyn">/gerar [qtd]</div><div class="cdesc">Gera tokens. Ex: /gerar 3</div></div>
         <div class="citem"><div class="csyn">/clientes</div><div class="cdesc">Lista todos os clientes com status e validade.</div></div>
         <div class="citem"><div class="csyn">/renovar CHAT_ID</div><div class="cdesc">Renova acesso por mais 30 dias.</div></div>
         <div class="citem"><div class="csyn">/revogar CHAT_ID</div><div class="cdesc">Revoga acesso imediatamente.</div></div>
-        <div class="citem"><div class="csyn">/stats</div><div class="cdesc">Resumo: ativos, expirados, tokens livres, receita.</div></div>
+        <div class="citem"><div class="csyn">/stats</div><div class="cdesc">Resumo geral: ativos, expirados, tokens, receita.</div></div>
       </div>
       <div class="cgrp">
         <div class="cgtitle">⚙️ Configurar cliente</div>
-        <div class="citem"><div class="csyn">/setmodo CHAT_ID completo|basico</div><div class="cdesc">Define o modo de acesso do cliente.</div></div>
+        <div class="citem"><div class="csyn">/setmodo CHAT_ID completo|basico</div><div class="cdesc">Define modo de acesso.</div></div>
         <div class="citem"><div class="csyn">/setsite CHAT_ID URL</div><div class="cdesc">Define site personalizado no rodapé.</div></div>
         <div class="citem"><div class="csyn">/setsite CHAT_ID remover</div><div class="cdesc">Remove o site personalizado.</div></div>
       </div>
       <div class="cgrp">
         <div class="cgtitle">📡 Envio manual</div>
-        <div class="citem"><div class="csyn">/cartaz</div><div class="cdesc">Posta filmes em cartaz para todos os clientes ativos.</div></div>
-        <div class="citem"><div class="csyn">/trending</div><div class="cdesc">Posta trending da semana para todos os clientes ativos.</div></div>
+        <div class="citem"><div class="csyn">/cartaz</div><div class="cdesc">Posta filmes em cartaz para todos os ativos.</div></div>
+        <div class="citem"><div class="csyn">/trending</div><div class="cdesc">Posta trending da semana para todos os ativos.</div></div>
       </div>
     </div>
   </div>
@@ -325,12 +348,29 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 <div class="mov" id="mod-cl">
   <div class="mbox">
     <div class="mtitle" id="mod-cl-title">Adicionar cliente</div>
-    <div class="mfld"><div class="mlbl">Chat ID</div><input class="inp" id="m-cid" placeholder="-1001234567890"/></div>
-    <div class="mfld" id="m-tkfld"><div class="mlbl">Token SF-XXXXXXXXXX</div><input class="inp" id="m-tok" placeholder="SF-XXXXXXXXXX"/></div>
-    <div class="mfld"><div class="mlbl">Modo</div>
-      <select class="inp" id="m-modo"><option value="completo">Completo</option><option value="basico">Básico</option></select>
+    <div class="mfld">
+      <div class="mlbl">Nome do Canal (opcional)</div>
+      <input class="inp" id="m-nome" placeholder="Ex: Canal do João"/>
     </div>
-    <div class="mfld"><div class="mlbl">Site personalizado (opcional)</div><input class="inp" id="m-site" placeholder="https://..."/></div>
+    <div class="mfld">
+      <div class="mlbl">Chat ID do canal</div>
+      <input class="inp" id="m-cid" placeholder="-1001234567890"/>
+    </div>
+    <div class="mfld" id="m-tkfld">
+      <div class="mlbl">Token SF-XXXXXXXXXX</div>
+      <input class="inp" id="m-tok" placeholder="SF-XXXXXXXXXX" style="font-family:var(--mono)"/>
+    </div>
+    <div class="mfld">
+      <div class="mlbl">Modo</div>
+      <select class="inp" id="m-modo">
+        <option value="completo">Completo</option>
+        <option value="basico">Básico</option>
+      </select>
+    </div>
+    <div class="mfld">
+      <div class="mlbl">Site personalizado (opcional)</div>
+      <input class="inp" id="m-site" placeholder="https://..."/>
+    </div>
     <div class="merr" id="mod-cl-err"></div>
     <div class="mact">
       <button class="btn bgh" onclick="closeMod('cl')">Cancelar</button>
@@ -343,7 +383,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 <div class="mov" id="mod-pr">
   <div class="mbox">
     <div class="mtitle">Nova mensagem de propaganda</div>
-    <div class="binfo" style="margin-bottom:8px">Use <b>{contato}</b> para inserir seu @ automaticamente.</div>
+    <div class="binfo" style="margin-bottom:10px">Use <b>{contato}</b> para inserir seu @ automaticamente.</div>
     <div class="mfld">
       <textarea class="inp" id="m-pr-txt" rows="6" style="resize:vertical"
         placeholder="🎬 Transforme seu canal! Fale: {contato}"></textarea>
@@ -359,7 +399,8 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 <div id="toast"></div>
 
 <script>
-let API='',PASS='',modMode='add',editCid=null,tkFilter='livres',allCl=[],allTk=[];
+let API='',PASS='',modMode='add',editCid=null,tkFilter='livres',clFilter='todos';
+let allCl=[],allTk=[];
 let autoTimer=null;
 
 // LOGIN
@@ -373,7 +414,7 @@ async function doLogin(){
     const r=await fetch(`${api}/admin?cmd=stats&pass=${encodeURIComponent(pass)}`);
     if(r.status===403){showLE('Senha incorreta.');btn.textContent='Entrar';btn.disabled=false;return}
     if(!r.ok){showLE(`Erro ao conectar (${r.status}).`);btn.textContent='Entrar';btn.disabled=false;return}
-  }catch(e){showLE('Não foi possível conectar. Verifique a URL.');btn.textContent='Entrar';btn.disabled=false;return}
+  }catch(e){showLE('Não foi possível conectar.');btn.textContent='Entrar';btn.disabled=false;return}
   API=api;PASS=pass;
   localStorage.setItem('sf_api',api);localStorage.setItem('sf_pass',pass);
   btn.textContent='Entrar';btn.disabled=false;
@@ -387,7 +428,7 @@ function logout(){
 }
 
 // API
-async function api(cmd){
+async function apicall(cmd){
   try{
     const r=await fetch(`${API}/admin?cmd=${encodeURIComponent(cmd)}&pass=${encodeURIComponent(PASS)}`);
     if(!r.ok)return{error:`HTTP ${r.status}`};
@@ -415,12 +456,10 @@ async function loadAll(){
 
 // STATS
 async function loadStats(){
-  const d=await api('stats');
+  const d=await apicall('stats');
   if(d.error)return;
   document.getElementById('s-at').textContent=d.ativos??'0';
-  // compatível com "expirados" e "inativos"
-  const exp=d.expirados??d.inativos??'—';
-  document.getElementById('s-ex').textContent=exp;
+  document.getElementById('s-ex').textContent=d.expirados??d.inativos??'—';
   document.getElementById('s-tk').textContent=d.tokens_livres??'0';
   document.getElementById('s-rc').textContent=d.receita?`R$ ${d.receita}`:'—';
   document.getElementById('bc-info').textContent=`Será enviado para ${d.ativos??0} cliente(s) ativo(s).`;
@@ -428,61 +467,88 @@ async function loadStats(){
 
 // CLIENTES
 async function loadCl(){
-  const d=await api('clientes');
+  const d=await apicall('clientes');
   if(d.error||!d.clientes){
     document.getElementById('cl-list').innerHTML=`<div class="empty">Erro: ${d.error||'sem dados'}</div>`;return;
   }
-  allCl=d.clientes;renderCl(allCl);
+  allCl=d.clientes;
+  applyClFilter();
+}
+
+function setClFilter(f){
+  clFilter=f;
+  ['todos','ativos','exp'].forEach(x=>{
+    document.getElementById(`cf-${x}`).classList.toggle('on',x===f);
+  });
+  applyClFilter();
+}
+
+function applyClFilter(){
+  let list=allCl;
+  if(clFilter==='ativos')list=list.filter(c=>c.ativo);
+  else if(clFilter==='exp')list=list.filter(c=>!c.ativo);
+  renderCl(list);
+}
+
+function filterCl(q){
+  let list=allCl;
+  if(clFilter==='ativos')list=list.filter(c=>c.ativo);
+  else if(clFilter==='exp')list=list.filter(c=>!c.ativo);
+  if(q){
+    const ql=q.toLowerCase();
+    list=list.filter(c=>String(c.chat_id).includes(ql)||(c.nome_canal||'').toLowerCase().includes(ql));
+  }
+  renderCl(list);
 }
 
 function renderCl(list){
   const el=document.getElementById('cl-list');
-  if(!list.length){el.innerHTML='<div class="empty">Nenhum cliente cadastrado.</div>';return}
+  if(!list.length){el.innerHTML='<div class="empty">Nenhum cliente encontrado.</div>';return}
   el.innerHTML=list.map(c=>{
-    const ok=c.ativo&&(c.dias_rest??-1)>=0;
+    const ok=c.ativo;
     const dias=c.dias_rest??-1;
-    const dcol=dias>7?'g':dias>0?'y':'r';
-    const site=c.site_url?`<a href="${c.site_url}" target="_blank" style="color:var(--ora);font-size:11px">${c.site_url.replace('https://','')}</a>`:'—';
+    const dcol=dias>7?'grn':dias>0?'yel':'acc';
+    const site=c.site_url?`<a href="${c.site_url}" target="_blank" style="color:var(--ora)">${c.site_url.replace('https://','')}</a>`:'—';
+    const nomeEl=c.nome_canal
+      ?`<span class="cnome">📺 ${c.nome_canal}</span>`
+      :`<span class="cnome-ph">Sem nome</span>`;
     return `<div class="ccard">
-      <div class="ccard-top">
+      <div class="ccard-head">
         <span class="badge ${ok?'bg-g':'bg-r'}">${ok?'● Ativo':'● Expirado'}</span>
-        <span class="cid">${c.chat_id}</span>
+        ${nomeEl}
       </div>
+      <div class="cid" style="margin-bottom:8px">${c.chat_id}</div>
       <div class="cinfo">
-        <div class="ci">Validade: <span>${c.validade||'—'}</span></div>
-        <div class="ci">Dias: <span style="color:var(--${dcol})">${dias>=0?dias+'d':'—'}</span></div>
-        <div class="ci">Modo: <span>${c.modo||'completo'}</span></div>
-        <div class="ci">Site: <span>${site}</span></div>
+        <div class="ci">Validade: <b>${c.validade||'—'}</b></div>
+        <div class="ci">Dias: <b style="color:var(--${dcol})">${dias>=0?dias+'d':'—'}</b></div>
+        <div class="ci">Modo: <b>${c.modo||'completo'}</b></div>
+        <div class="ci">Site: <b>${site}</b></div>
       </div>
       <div class="cacts">
         <button class="btn bg2 bsm" onclick="renovar(${c.chat_id})">↻ Renovar</button>
-        <button class="btn by bsm" onclick="openEdit(${c.chat_id},'${c.modo||'completo'}','${c.site_url||''}')">✏️ Config</button>
-        <button class="btn br bsm" onclick="revogar(${c.chat_id})">✕ Revogar</button>
+        <button class="btn by bsm" onclick="openEdit(${c.chat_id},'${c.modo||'completo'}','${c.site_url||''}','${c.nome_canal||''}')">✏️ Config</button>
+        <button class="btn br bsm" onclick="deletarCliente(${c.chat_id})">🗑️ Deletar</button>
       </div>
     </div>`;
   }).join('');
 }
 
-function filterCl(q){
-  if(!q){renderCl(allCl);return}
-  renderCl(allCl.filter(c=>String(c.chat_id).includes(q.trim())));
-}
-
 async function renovar(cid){
-  const d=await api(`renovar:${cid}`);
+  const d=await apicall(`renovar:${cid}`);
   if(d.ok){toast('✅ Renovado até '+d.validade);loadAll();}
   else toast('❌ Erro ao renovar');
 }
-async function revogar(cid){
-  if(!confirm(`Revogar ${cid}?`))return;
-  const d=await api(`revogar:${cid}`);
-  if(d.ok){toast('✅ Revogado');loadAll();}
-  else toast('❌ Erro');
+
+async function deletarCliente(cid){
+  if(!confirm(`Deletar completamente o cliente ${cid}?\n\nIsso remove do banco permanentemente.`))return;
+  const d=await apicall(`cliente_del:${cid}`);
+  if(d.ok){toast('✅ Cliente removido');loadAll();}
+  else toast('❌ Erro ao deletar');
 }
 
 // TOKENS
 async function loadTk(){
-  const d=await api('tokens_lista');
+  const d=await apicall('tokens_lista');
   if(d.error||!d.tokens){allTk=[];renderTk();return}
   allTk=d.tokens;renderTk();
 }
@@ -490,8 +556,7 @@ async function loadTk(){
 function setTkFilter(f){
   tkFilter=f;
   ['livres','usados','todos'].forEach(x=>{
-    const b=document.getElementById(`fb-${x}`);
-    b.classList.toggle('on',x===f);
+    document.getElementById(`fb-${x}`).classList.toggle('on',x===f);
   });
   renderTk();
 }
@@ -510,23 +575,45 @@ function renderTk(){
         <div class="tkcode">${t.token}</div>
         <div class="tkmeta">${t.usado?'✅ Usado':'🟡 Livre'} · ${t.criado_em||''}</div>
       </div>
-      ${!t.usado?`<button class="cpbtn" onclick="cpTk(this,'${t.token}')">📋 Copiar</button>`:''}
+      <div class="tkacts">
+        ${!t.usado?`<button class="cpbtn" onclick="cpTk(this,'${t.token}')">📋</button>`:''}
+        ${!t.usado?`<button class="btn br bsm" onclick="deletarTk('${t.token}')">✕</button>`:''}
+      </div>
     </div>`).join('');
 }
 
 async function gerarTk(){
   const qtd=document.getElementById('qtk').value;
-  const d=await api(`gerar:${qtd}`);
+  const d=await apicall(`gerar:${qtd}`);
   if(d.error||!d.tokens){toast('❌ Erro ao gerar');return}
   toast(`✅ ${d.tokens.length} token(s) gerado(s)!`);
   await loadTk();await loadStats();
   setTkFilter('livres');
 }
 
+async function adicionarTkManual(){
+  const val=document.getElementById('tk-manual').value.trim().toUpperCase();
+  if(!val){toast('⚠️ Digite o código do token');return}
+  const d=await apicall(`token_add:${encodeURIComponent(val)}`);
+  if(d.ok){
+    toast(`✅ Token ${val} adicionado!`);
+    document.getElementById('tk-manual').value='';
+    await loadTk();await loadStats();
+    setTkFilter('livres');
+  }else toast('❌ '+(d.error||'Erro ao adicionar'));
+}
+
+async function deletarTk(token){
+  if(!confirm(`Deletar token ${token}?`))return;
+  const d=await apicall(`token_del:${encodeURIComponent(token)}`);
+  if(d.ok){toast('✅ Token deletado');loadTk();loadStats();}
+  else toast('❌ '+(d.error||'Erro'));
+}
+
 function cpTk(btn,txt){
   navigator.clipboard.writeText(txt).then(()=>{
-    btn.textContent='✅ Copiado!';btn.classList.add('ok');
-    setTimeout(()=>{btn.textContent='📋 Copiar';btn.classList.remove('ok')},2000);
+    btn.textContent='✅';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='📋';btn.classList.remove('ok')},2000);
   });
 }
 
@@ -536,7 +623,7 @@ async function enviarBC(){
   if(!msg){toast('⚠️ Digite uma mensagem');return}
   if(!confirm('Enviar para TODOS os clientes ativos?'))return;
   document.getElementById('bc-st').textContent='Enviando...';
-  const d=await api(`broadcast:${encodeURIComponent(msg)}`);
+  const d=await apicall(`broadcast:${encodeURIComponent(msg)}`);
   if(d.ok){toast(`✅ Enviado para ${d.enviados||0} cliente(s)`);document.getElementById('bc-msg').value='';}
   else toast('❌ Erro: '+(d.error||'?'));
   document.getElementById('bc-st').textContent='';
@@ -544,13 +631,13 @@ async function enviarBC(){
 
 // HISTORICO
 async function loadHi(){
-  const d=await api('historico');
+  const d=await apicall('historico');
   const el=document.getElementById('hi-list');
   if(d.error||!d.historico){el.innerHTML='<div class="empty">Sem histórico.</div>';return}
   if(!d.historico.length){el.innerHTML='<div class="empty">Nenhuma ativação ainda.</div>';return}
   el.innerHTML=d.historico.map(h=>`
     <div class="hitem">
-      <div class="hico">🟢</div>
+      <div style="font-size:16px">🟢</div>
       <div>
         <div class="htxt">Chat ID <b>${h.chat_id}</b> ativou token <b>${h.token||'—'}</b></div>
         <div class="htime">${h.criado_em||''} · até ${h.validade||'—'}</div>
@@ -560,10 +647,10 @@ async function loadHi(){
 
 // PROPAGANDAS
 async function loadPR(){
-  const d=await api('propagandas_lista');
+  const d=await apicall('propagandas_lista');
   const felEl=document.getElementById('pr-fixas');
   const cusEl=document.getElementById('pr-custom');
-  if(d.error){felEl.innerHTML='';cusEl.innerHTML='<div class="empty">Bot sem suporte a propagandas ainda. Suba o bot.py atualizado.</div>';return}
+  if(d.error){felEl.innerHTML='';cusEl.innerHTML='<div class="empty">Suba o bot.py atualizado para usar propagandas.</div>';return}
   if(d.fixas&&d.fixas.length){
     felEl.innerHTML=d.fixas.map((t,i)=>`
       <div class="pitem">
@@ -576,7 +663,7 @@ async function loadPR(){
   }
   cusEl.innerHTML=d.propagandas.map(p=>`
     <div class="pitem">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div style="display:flex;justify-content:space-between;gap:8px">
         <div>
           <div class="pmeta">#${p.id} · ${p.criado_em}</div>
           <div class="ptxt">${p.texto.replace(/\n/g,'<br>')}</div>
@@ -589,10 +676,9 @@ async function loadPR(){
 async function dispararPR(){
   const txt=document.getElementById('pr-manual').value.trim();
   document.getElementById('pr-st').textContent='Enviando...';
-  const cmd=txt?`propaganda_disparo:${encodeURIComponent(txt)}`:'propaganda_disparo:';
-  const d=await api(cmd);
+  const d=await apicall(txt?`propaganda_disparo:${encodeURIComponent(txt)}`:'propaganda_disparo:');
   if(d.ok){toast(`✅ Enviado para ${d.enviados} canal(is)!`);document.getElementById('pr-manual').value='';}
-  else toast('❌ Erro: '+(d.error||'Bot precisa ser atualizado'));
+  else toast('❌ '+(d.error||'Erro'));
   document.getElementById('pr-st').textContent='';
 }
 
@@ -605,22 +691,23 @@ function openProMod(){
 async function salvarPR(){
   const txt=document.getElementById('m-pr-txt').value.trim();
   if(!txt){document.getElementById('mod-pr-err').textContent='⚠️ Digite a mensagem.';return}
-  const d=await api(`propaganda_add:${encodeURIComponent(txt)}`);
+  const d=await apicall(`propaganda_add:${encodeURIComponent(txt)}`);
   if(d.ok){toast('✅ Salva!');closeMod('pr');loadPR();}
-  else toast('❌ Erro ao salvar — atualize o bot.py');
+  else toast('❌ Erro ao salvar');
 }
 
 async function delPR(pid){
   if(!confirm('Remover?'))return;
-  const d=await api(`propaganda_del:${pid}`);
+  const d=await apicall(`propaganda_del:${pid}`);
   if(d.ok){toast('✅ Removida');loadPR();}
   else toast('❌ Erro');
 }
 
-// MODAL
+// MODAL CLIENTE
 function openMod(mode){
   modMode='add';editCid=null;
   document.getElementById('mod-cl-title').textContent='Adicionar cliente';
+  document.getElementById('m-nome').value='';
   document.getElementById('m-cid').value='';document.getElementById('m-cid').disabled=false;
   document.getElementById('m-tok').value='';
   document.getElementById('m-tkfld').style.display='block';
@@ -629,9 +716,11 @@ function openMod(mode){
   document.getElementById('mod-cl-err').textContent='';
   document.getElementById('mod-cl').classList.add('on');
 }
-function openEdit(cid,modo,site){
+
+function openEdit(cid,modo,site,nome){
   modMode='edit';editCid=cid;
   document.getElementById('mod-cl-title').textContent='Configurar cliente';
+  document.getElementById('m-nome').value=nome||'';
   document.getElementById('m-cid').value=cid;document.getElementById('m-cid').disabled=true;
   document.getElementById('m-tkfld').style.display='none';
   document.getElementById('m-modo').value=modo||'completo';
@@ -639,27 +728,30 @@ function openEdit(cid,modo,site){
   document.getElementById('mod-cl-err').textContent='';
   document.getElementById('mod-cl').classList.add('on');
 }
+
 function closeMod(id){document.getElementById(`mod-${id}`).classList.remove('on')}
 
 async function modConfirm(){
   const err=document.getElementById('mod-cl-err');err.textContent='';
   const btn=document.getElementById('mod-cl-ok');btn.disabled=true;btn.textContent='Salvando...';
+  const nome=document.getElementById('m-nome').value.trim();
+  const modo=document.getElementById('m-modo').value;
+  const site=document.getElementById('m-site').value.trim();
+
   if(modMode==='add'){
     const cid=document.getElementById('m-cid').value.trim();
     const tok=document.getElementById('m-tok').value.trim().toUpperCase();
-    const modo=document.getElementById('m-modo').value;
-    const site=document.getElementById('m-site').value.trim();
     if(!cid||!tok){err.textContent='⚠️ Preencha Chat ID e Token.';btn.disabled=false;btn.textContent='Confirmar';return}
-    const d=await api(`ativar:${cid}:${tok}`);
+    const d=await apicall(`ativar:${cid}:${tok}`);
     if(!d.ok){err.textContent='❌ '+(d.error||'Erro');btn.disabled=false;btn.textContent='Confirmar';return}
-    if(modo!=='completo')await api(`config_modo:${cid}:${modo}`);
-    if(site)await api(`config_site:${cid}:${encodeURIComponent(site)}`);
+    if(modo!=='completo')await apicall(`config_modo:${cid}:${modo}`);
+    if(site)await apicall(`config_site:${cid}:${encodeURIComponent(site)}`);
+    if(nome)await apicall(`config_nome:${cid}:${encodeURIComponent(nome)}`);
     toast('✅ Cliente ativado!');
   }else{
-    const modo=document.getElementById('m-modo').value;
-    const site=document.getElementById('m-site').value.trim();
-    await api(`config_modo:${editCid}:${modo}`);
-    await api(`config_site:${editCid}:${encodeURIComponent(site||'remover')}`);
+    await apicall(`config_modo:${editCid}:${modo}`);
+    await apicall(`config_site:${editCid}:${encodeURIComponent(site||'remover')}`);
+    await apicall(`config_nome:${editCid}:${encodeURIComponent(nome||'remover')}`);
     toast('✅ Configurações salvas!');
   }
   btn.disabled=false;btn.textContent='Confirmar';
@@ -685,7 +777,7 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('on'),3000);
 }
 
-// FECHAR MODAL
+// FECHAR MODAIS
 ['mod-cl','mod-pr'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){
     if(e.target===this)this.classList.remove('on');
