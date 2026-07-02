@@ -218,6 +218,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
       <div class="tab" onclick="goTab('tk')">🎟️ Tokens</div>
       <div class="tab" onclick="goTab('bc')">📢 Mensagem</div>
       <div class="tab" onclick="goTab('pr')">📣 Propagandas</div>
+      <div class="tab" onclick="goTab('pm')">🎁 Prêmios</div>
       <div class="tab" onclick="goTab('hi')">📋 Histórico</div>
       <div class="tab" onclick="goTab('cm')">⌨️ Comandos</div>
     </div>
@@ -308,6 +309,97 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
       <div id="pr-fixas"></div>
       <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px">Personalizadas</div>
       <div id="pr-custom"><div class="empty">Nenhuma — usando as fixas.</div></div>
+    </div>
+
+
+    <!-- PRÊMIOS -->
+    <div class="tc" id="tc-pm">
+      <!-- Estoque -->
+      <div class="sgrid" style="margin-bottom:12px">
+        <div class="sc g"><div class="slbl">Xtream Livres</div><div class="sval g" id="pm-xt">—</div></div>
+        <div class="sc y"><div class="slbl">VIP Livres</div><div class="sval y" id="pm-vp">—</div></div>
+      </div>
+
+      <!-- Adicionar prêmio -->
+      <div class="bcard" style="margin-bottom:12px">
+        <div class="stitle" style="margin-bottom:10px">➕ Cadastrar novo prêmio</div>
+
+        <div class="mfld">
+          <div class="mlbl">Tipo</div>
+          <select class="inp" id="pm-tipo" onchange="togglePmFields()" style="margin-bottom:0">
+            <option value="xtream">📺 Conta Xtream</option>
+            <option value="vip">🎟️ Código VIP App</option>
+            <option value="outro">🎁 Outro</option>
+          </select>
+        </div>
+
+        <div class="mfld">
+          <div class="mlbl">Nome/Descrição</div>
+          <input class="inp" id="pm-nome" placeholder="Ex: Xtream Premium 30 dias" style="margin-bottom:0"/>
+        </div>
+
+        <div class="mfld">
+          <div class="mlbl">Valor (R$)</div>
+          <input class="inp" id="pm-valor" type="number" step="0.01" placeholder="2.00" style="margin-bottom:0"/>
+        </div>
+
+        <!-- Campos Xtream -->
+        <div id="pm-xt-fields">
+          <div class="mfld">
+            <div class="mlbl">Host</div>
+            <input class="inp" id="pm-host" placeholder="http://servidor.com:8080" style="margin-bottom:0"/>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div class="mfld" style="flex:1">
+              <div class="mlbl">Login</div>
+              <input class="inp" id="pm-login" placeholder="usuario123" style="margin-bottom:0"/>
+            </div>
+            <div class="mfld" style="flex:1">
+              <div class="mlbl">Senha</div>
+              <input class="inp" id="pm-senha" placeholder="senha456" style="margin-bottom:0"/>
+            </div>
+          </div>
+          <div class="mfld">
+            <div class="mlbl">Data Expiração</div>
+            <input class="inp" id="pm-exp" placeholder="31/12/2026" style="margin-bottom:0"/>
+          </div>
+        </div>
+
+        <!-- Campo outros -->
+        <div id="pm-outro-fields" style="display:none">
+          <div class="mfld">
+            <div class="mlbl">Conteúdo (código, link, etc)</div>
+            <textarea class="inp" id="pm-conteudo" rows="3" placeholder="Cole aqui o conteúdo do prêmio..." style="margin-bottom:0;resize:vertical"></textarea>
+          </div>
+        </div>
+
+        <div id="pm-add-err" style="color:var(--acc);font-size:12px;margin:6px 0;min-height:16px"></div>
+        <button class="btn bp" onclick="adicionarPremio()">+ Cadastrar</button>
+      </div>
+
+      <!-- Lista de prêmios -->
+      <div class="sh">
+        <div class="stitle">📋 Prêmios cadastrados</div>
+        <div style="display:flex;gap:6px">
+          <button class="fbtn on" id="pmf-livres" onclick="setPmFilter('livres')">Livres</button>
+          <button class="fbtn" id="pmf-usados" onclick="setPmFilter('usados')">Usados</button>
+          <button class="fbtn" id="pmf-todos" onclick="setPmFilter('todos')">Todos</button>
+        </div>
+      </div>
+      <div id="pm-list"><div class="empty">Carregando...</div></div>
+
+      <!-- Histórico de resgates -->
+      <div class="sh" style="margin-top:16px">
+        <div class="stitle">📦 Últimos resgates</div>
+        <button class="btn bgh bsm" onclick="loadResgates()">↻</button>
+      </div>
+      <div id="pm-resgates"><div class="empty">Carregando...</div></div>
+
+      <!-- Créditos de usuários -->
+      <div class="sh" style="margin-top:16px">
+        <div class="stitle">💰 Saldos de usuários</div>
+      </div>
+      <div id="pm-creditos"><div class="empty">Carregando...</div></div>
     </div>
 
     <!-- HISTORICO -->
@@ -759,7 +851,7 @@ async function modConfirm(){
 }
 
 // TABS
-const TABS=['cl','tk','bc','pr','hi','cm'];
+const TABS=['cl','tk','bc','pr','pm','hi','cm'];
 function goTab(id){
   TABS.forEach((t,i)=>{
     document.querySelectorAll('.tab')[i].classList.toggle('on',t===id);
@@ -768,6 +860,7 @@ function goTab(id){
   if(id==='hi')loadHi();
   if(id==='tk')loadTk();
   if(id==='pr')loadPR();
+  if(id==='pm')loadPremios();
 }
 
 // TOAST
@@ -775,6 +868,149 @@ function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('on');
   setTimeout(()=>t.classList.remove('on'),3000);
+}
+
+
+// ── PRÊMIOS ────────────────────────────────────────────────────────────────
+let allPremios=[], pmFilter='livres';
+
+function togglePmFields(){
+  const tipo=document.getElementById('pm-tipo').value;
+  document.getElementById('pm-xt-fields').style.display=tipo==='xtream'?'block':'none';
+  document.getElementById('pm-outro-fields').style.display=tipo==='xtream'?'none':'block';
+}
+
+async function loadPremios(){
+  const d=await apicall('premios_lista');
+  const err=document.getElementById('pm-add-err');
+  if(d.error){
+    document.getElementById('pm-list').innerHTML='<div class="empty">Suba o bot.py atualizado.</div>';
+    return;
+  }
+  allPremios=d.premios||[];
+  // Estoque
+  const disp=d.disponiveis||{};
+  document.getElementById('pm-xt').textContent=disp.xtream||'0';
+  document.getElementById('pm-vp').textContent=disp.vip||'0';
+  renderPremios();
+  loadResgates();
+  loadCreditos();
+}
+
+function setPmFilter(f){
+  pmFilter=f;
+  ['livres','usados','todos'].forEach(x=>{
+    document.getElementById(`pmf-${x}`).classList.toggle('on',x===f);
+  });
+  renderPremios();
+}
+
+function renderPremios(){
+  const el=document.getElementById('pm-list');
+  let list=allPremios;
+  if(pmFilter==='livres')list=list.filter(p=>!p.usado);
+  else if(pmFilter==='usados')list=list.filter(p=>p.usado);
+  if(!list.length){el.innerHTML='<div class="empty">Nenhum prêmio encontrado.</div>';return}
+  el.innerHTML=list.map(p=>{
+    const emoji=p.tipo==='xtream'?'📺':p.tipo==='vip'?'🎟️':'🎁';
+    const statusBadge=p.usado
+      ?'<span class="badge bg-r">Usado</span>'
+      :'<span class="badge bg-g">Livre</span>';
+    // Preview do conteúdo
+    const linhas=p.conteudo.split('|');
+    let preview='';
+    if(p.tipo==='xtream'){
+      preview=`<div class="ci">Host: <b>${linhas[0]||'—'}</b></div>
+               <div class="ci">Login: <b>${linhas[1]||'—'}</b> / Senha: <b>${linhas[2]||'—'}</b></div>
+               ${p.data_exp?`<div class="ci">Exp: <b>${p.data_exp}</b></div>`:''}`;
+    } else {
+      preview=`<div class="ci" style="font-family:var(--mono);font-size:11px">${p.conteudo}</div>`;
+    }
+    return `<div class="ccard" style="margin-bottom:8px">
+      <div class="ccard-head">
+        ${statusBadge}
+        <span class="cnome">${emoji} ${p.nome}</span>
+        <span style="font-size:12px;color:var(--grn);font-weight:700">R$ ${p.valor.toFixed(2)}</span>
+      </div>
+      <div class="cinfo">${preview}</div>
+      ${!p.usado?`<button class="btn br bsm" onclick="deletarPremio(${p.id})">🗑️ Deletar</button>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function adicionarPremio(){
+  const err=document.getElementById('pm-add-err');err.textContent='';
+  const tipo=document.getElementById('pm-tipo').value;
+  const nome=document.getElementById('pm-nome').value.trim();
+  const valor=document.getElementById('pm-valor').value.trim();
+  if(!nome||!valor){err.textContent='⚠️ Preencha nome e valor.';return}
+
+  let conteudo='', data_exp=null;
+  if(tipo==='xtream'){
+    const host=document.getElementById('pm-host').value.trim();
+    const login=document.getElementById('pm-login').value.trim();
+    const senha=document.getElementById('pm-senha').value.trim();
+    data_exp=document.getElementById('pm-exp').value.trim()||null;
+    if(!host||!login||!senha){err.textContent='⚠️ Preencha host, login e senha.';return}
+    conteudo=`${host}|${login}|${senha}`;
+  } else {
+    conteudo=document.getElementById('pm-conteudo').value.trim();
+    if(!conteudo){err.textContent='⚠️ Preencha o conteúdo.';return}
+  }
+
+  const payload=JSON.stringify({tipo,nome,conteudo,valor:parseFloat(valor),data_exp});
+  const d=await apicall(`premio_add:${encodeURIComponent(payload)}`);
+  if(d.ok){
+    toast('✅ Prêmio cadastrado!');
+    // Limpar campos
+    document.getElementById('pm-nome').value='';
+    document.getElementById('pm-valor').value='';
+    document.getElementById('pm-host').value='';
+    document.getElementById('pm-login').value='';
+    document.getElementById('pm-senha').value='';
+    document.getElementById('pm-exp').value='';
+    document.getElementById('pm-conteudo').value='';
+    await loadPremios();
+    setPmFilter('livres');
+  } else toast('❌ Erro ao cadastrar');
+}
+
+async function deletarPremio(id){
+  if(!confirm('Deletar este prêmio?'))return;
+  const d=await apicall(`premio_del:${id}`);
+  if(d.ok){toast('✅ Deletado');loadPremios();}
+  else toast('❌ Erro ao deletar');
+}
+
+async function loadResgates(){
+  const d=await apicall('resgates_lista');
+  const el=document.getElementById('pm-resgates');
+  if(d.error||!d.resgates){el.innerHTML='<div class="empty">Sem resgates ainda.</div>';return}
+  if(!d.resgates.length){el.innerHTML='<div class="empty">Nenhum resgate realizado.</div>';return}
+  el.innerHTML=d.resgates.map(r=>`
+    <div class="hitem">
+      <div style="font-size:16px">${r.tipo==='xtream'?'📺':r.tipo==='vip'?'🎟️':'🎁'}</div>
+      <div>
+        <div class="htxt">User <b>${r.user_id}</b> resgatou <b>${r.nome}</b></div>
+        <div class="htime">${r.criado_em} · R$ ${r.valor.toFixed(2)}</div>
+      </div>
+    </div>`).join('');
+}
+
+async function loadCreditos(){
+  const d=await apicall('creditos_lista');
+  const el=document.getElementById('pm-creditos');
+  if(d.error||!d.creditos||!d.creditos.length){
+    el.innerHTML='<div class="empty">Nenhum usuário com saldo.</div>';return;
+  }
+  el.innerHTML=d.creditos.map(c=>`
+    <div class="tkitem">
+      <div>
+        <div class="tkcode">${c.user_id}</div>
+        <div class="tkmeta">Atualizado: ${c.atualizado}</div>
+      </div>
+      <span style="color:var(--grn);font-weight:700;font-size:14px">R$ ${c.saldo.toFixed(2)}</span>
+    </div>`).join('');
 }
 
 // FECHAR MODAIS
