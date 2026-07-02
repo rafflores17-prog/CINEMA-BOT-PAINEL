@@ -365,11 +365,14 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
           </div>
         </div>
 
-        <!-- Campo outros -->
+        <!-- Campo outros / VIP em lote -->
         <div id="pm-outro-fields" style="display:none">
           <div class="mfld">
-            <div class="mlbl">Conteúdo (código, link, etc)</div>
-            <textarea class="inp" id="pm-conteudo" rows="3" placeholder="Cole aqui o conteúdo do prêmio..." style="margin-bottom:0;resize:vertical"></textarea>
+            <div class="mlbl">Conteúdo — um por linha para cadastrar vários de uma vez</div>
+            <textarea class="inp" id="pm-conteudo" rows="6"
+              placeholder="VIP-ABC123&#10;VIP-DEF456&#10;VIP-GHI789&#10;(um código por linha)"
+              style="margin-bottom:4px;resize:vertical;font-family:var(--mono);font-size:12px"></textarea>
+            <div style="font-size:11px;color:var(--mut)">💡 Cole quantos quiser — cada linha vira um prêmio separado.</div>
           </div>
         </div>
 
@@ -945,34 +948,45 @@ async function adicionarPremio(){
   const valor=document.getElementById('pm-valor').value.trim();
   if(!nome||!valor){err.textContent='⚠️ Preencha nome e valor.';return}
 
-  let conteudo='', data_exp=null;
+  let data_exp=null;
   if(tipo==='xtream'){
     const host=document.getElementById('pm-host').value.trim();
     const login=document.getElementById('pm-login').value.trim();
     const senha=document.getElementById('pm-senha').value.trim();
     data_exp=document.getElementById('pm-exp').value.trim()||null;
     if(!host||!login||!senha){err.textContent='⚠️ Preencha host, login e senha.';return}
-    conteudo=`${host}|${login}|${senha}`;
+    const conteudo=`${host}|${login}|${senha}`;
+    const payload=JSON.stringify({tipo,nome,conteudo,valor:parseFloat(valor),data_exp});
+    const d=await apicall(`premio_add:${encodeURIComponent(payload)}`);
+    if(d.ok){
+      toast('✅ Prêmio cadastrado!');
+      document.getElementById('pm-nome').value='';
+      document.getElementById('pm-valor').value='';
+      document.getElementById('pm-host').value='';
+      document.getElementById('pm-login').value='';
+      document.getElementById('pm-senha').value='';
+      document.getElementById('pm-exp').value='';
+      await loadPremios(); setPmFilter('livres');
+    } else toast('❌ Erro ao cadastrar');
   } else {
-    conteudo=document.getElementById('pm-conteudo').value.trim();
-    if(!conteudo){err.textContent='⚠️ Preencha o conteúdo.';return}
+    // Lote: cada linha é um prêmio separado
+    const rawConteudo=document.getElementById('pm-conteudo').value;
+    const linhas=rawConteudo.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+    if(!linhas.length){err.textContent='⚠️ Preencha o conteúdo.';return}
+    let ok=0, fail=0;
+    for(const linha of linhas){
+      const payload=JSON.stringify({tipo,nome,conteudo:linha,valor:parseFloat(valor),data_exp:null});
+      const d=await apicall(`premio_add:${encodeURIComponent(payload)}`);
+      if(d.ok) ok++; else fail++;
+    }
+    if(ok>0){
+      toast(`✅ ${ok} prêmio(s) cadastrado(s)${fail>0?' · '+fail+' falhou':''}!`);
+      document.getElementById('pm-nome').value='';
+      document.getElementById('pm-valor').value='';
+      document.getElementById('pm-conteudo').value='';
+      await loadPremios(); setPmFilter('livres');
+    } else toast('❌ Erro ao cadastrar');
   }
-
-  const payload=JSON.stringify({tipo,nome,conteudo,valor:parseFloat(valor),data_exp});
-  const d=await apicall(`premio_add:${encodeURIComponent(payload)}`);
-  if(d.ok){
-    toast('✅ Prêmio cadastrado!');
-    // Limpar campos
-    document.getElementById('pm-nome').value='';
-    document.getElementById('pm-valor').value='';
-    document.getElementById('pm-host').value='';
-    document.getElementById('pm-login').value='';
-    document.getElementById('pm-senha').value='';
-    document.getElementById('pm-exp').value='';
-    document.getElementById('pm-conteudo').value='';
-    await loadPremios();
-    setPmFilter('livres');
-  } else toast('❌ Erro ao cadastrar');
 }
 
 async function deletarPremio(id){
