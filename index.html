@@ -395,11 +395,17 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
       <!-- Lista de prêmios -->
       <div class="sh">
         <div class="stitle">📋 Prêmios cadastrados</div>
-        <div style="display:flex;gap:6px">
-          <button class="fbtn on" id="pmf-livres" onclick="setPmFilter('livres')">Livres</button>
-          <button class="fbtn" id="pmf-usados" onclick="setPmFilter('usados')">Usados</button>
-          <button class="fbtn" id="pmf-todos" onclick="setPmFilter('todos')">Todos</button>
-        </div>
+      </div>
+      <div class="frow" style="margin-bottom:6px">
+        <button class="fbtn on" id="pmf-livres" onclick="setPmFilter('livres')">🟡 Livres</button>
+        <button class="fbtn" id="pmf-usados" onclick="setPmFilter('usados')">✅ Usados</button>
+        <button class="fbtn" id="pmf-todos" onclick="setPmFilter('todos')">Todos</button>
+      </div>
+      <div class="frow">
+        <button class="fbtn on" id="pmt-todos" onclick="setPmTipo('todos')">Todos os tipos</button>
+        <button class="fbtn" id="pmt-xtream" onclick="setPmTipo('xtream')">📺 Xtream</button>
+        <button class="fbtn" id="pmt-vip" onclick="setPmTipo('vip')">🎟️ VIP</button>
+        <button class="fbtn" id="pmt-outro" onclick="setPmTipo('outro')">🎁 Outros</button>
       </div>
       <div id="pm-list"><div class="empty">Carregando...</div></div>
 
@@ -887,7 +893,7 @@ function toast(msg){
 
 
 // ── PRÊMIOS ────────────────────────────────────────────────────────────────
-let allPremios=[], pmFilter='livres';
+let allPremios=[], pmFilter='livres', pmTipo='todos';
 
 function togglePmFields(){
   const tipo=document.getElementById('pm-tipo').value;
@@ -946,11 +952,20 @@ function setPmFilter(f){
   renderPremios();
 }
 
+function setPmTipo(t){
+  pmTipo=t;
+  ['todos','xtream','vip','outro'].forEach(x=>{
+    document.getElementById(`pmt-${x}`).classList.toggle('on',x===t);
+  });
+  renderPremios();
+}
+
 function renderPremios(){
   const el=document.getElementById('pm-list');
   let list=allPremios;
   if(pmFilter==='livres')list=list.filter(p=>!p.usado);
   else if(pmFilter==='usados')list=list.filter(p=>p.usado);
+  if(pmTipo!=='todos')list=list.filter(p=>p.tipo===pmTipo);
   if(!list.length){el.innerHTML='<div class="empty">Nenhum prêmio encontrado.</div>';return}
   el.innerHTML=list.map(p=>{
     const emoji=p.tipo==='xtream'?'📺':p.tipo==='vip'?'🎟️':'🎁';
