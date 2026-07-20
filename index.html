@@ -333,6 +333,20 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
           </select>
         </div>
 
+        <!-- Só aparece quando Tipo = Código VIP App. Preenche nome+valor
+             automaticamente a partir dos 3 planos oficiais do app, pra
+             evitar cadastrar um código com preço desatualizado/errado
+             (foi o que causou o "R$5,99" aparecendo errado no bot antes,
+             quando o valor era digitado à mão). -->
+        <div class="mfld" id="pm-vip-plano-field" style="display:none">
+          <div class="mlbl">Plano VIP</div>
+          <select class="inp" id="pm-vip-plano" onchange="aplicarPlanoVip()" style="margin-bottom:0">
+            <option value="30" data-nome="StreamFlixVip App — 30 dias" data-valor="19.90">30 dias — R$ 19,90</option>
+            <option value="90" data-nome="StreamFlixVip App — 3 meses" data-valor="49.90">3 meses — R$ 49,90</option>
+            <option value="vitalicio" data-nome="StreamFlixVip App — Vitalício" data-valor="99.90">Vitalício — R$ 99,90</option>
+          </select>
+        </div>
+
         <div class="mfld">
           <div class="mlbl">Nome/Descrição</div>
           <input class="inp" id="pm-nome" placeholder="Ex: Xtream Premium 30 dias" style="margin-bottom:0"/>
@@ -654,9 +668,15 @@ async function renovar(cid){
 
 async function deletarCliente(cid){
   if(!confirm(`Deletar completamente o cliente ${cid}?\n\nIsso remove do banco permanentemente.`))return;
-  const d=await apicall(`cliente_del:${cid}`);
-  if(d.ok){toast('✅ Cliente removido');loadAll();}
-  else toast('❌ Erro ao deletar');
+  let d=await apicall(`cliente_del:${cid}`);
+  if(d.ok){toast('✅ Cliente removido');loadAll();return}
+  if(d.error && d.error.includes('ainda ativo')){
+    if(confirm(`⚠️ Este cliente ainda está ATIVO e com validade em dia.\n\n${d.error}\n\nTem certeza que quer deletar mesmo assim?`)){
+      d=await apicall(`cliente_del:${cid}:force=1`);
+      if(d.ok){toast('✅ Cliente removido (forçado)');loadAll();return}
+    } else { return; }
+  }
+  toast('❌ '+(d.error||'Erro ao deletar'));
 }
 
 // TOKENS
@@ -900,6 +920,19 @@ function togglePmFields(){
   document.getElementById('pm-xt-fields').style.display=tipo==='xtream'?'block':'none';
   document.getElementById('pm-m3u-fields').style.display=tipo==='xtream'?'block':'none';
   document.getElementById('pm-outro-fields').style.display=tipo==='xtream'?'none':'block';
+  document.getElementById('pm-vip-plano-field').style.display=tipo==='vip'?'block':'none';
+  if(tipo==='vip') aplicarPlanoVip(); // já preenche nome+valor com o plano selecionado por padrão
+}
+
+// Preenche Nome/Descrição e Valor automaticamente a partir do plano VIP
+// escolhido, lendo os data-attributes das options em vez de valores
+// fixos no JS — trocar o preço de um plano no futuro é só editar o HTML
+// das options acima, sem precisar mexer em nenhuma lógica.
+function aplicarPlanoVip(){
+  const sel=document.getElementById('pm-vip-plano');
+  const opt=sel.options[sel.selectedIndex];
+  document.getElementById('pm-nome').value=opt.dataset.nome;
+  document.getElementById('pm-valor').value=opt.dataset.valor;
 }
 
 function parsearM3U(url){
