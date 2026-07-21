@@ -325,12 +325,32 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
         <div class="stitle" style="margin-bottom:10px">➕ Cadastrar novo prêmio</div>
 
         <div class="mfld">
-          <div class="mlbl">Tipo</div>
-          <select class="inp" id="pm-tipo" onchange="togglePmFields()" style="margin-bottom:0">
-            <option value="xtream">📺 Conta Xtream</option>
-            <option value="vip">🎟️ Código VIP App</option>
-            <option value="outro">🎁 Outro</option>
-          </select>
+          <div class="mlbl">Tipo de prêmio</div>
+          <div class="frow" style="margin-bottom:0">
+            <button class="fbtn on" id="pmm-xtream" onclick="setPmModo('xtream')">📺 Xtream</button>
+            <button class="fbtn" id="pmm-vip" onclick="setPmModo('vip')">🎟️ VIP App</button>
+            <button class="fbtn" id="pmm-streaming" onclick="setPmModo('streaming')">🎬 Streamings</button>
+            <button class="fbtn" id="pmm-personalizado" onclick="setPmModo('personalizado')">✨ Personalizado</button>
+          </div>
+        </div>
+
+        <!-- Sanfona de Streamings: lista fixa pré-gravada. Só escolhe o
+             streaming (nome+emoji já vêm prontos) e preenche valor +
+             descrição do plano (ex: Mensal, Anual). Não digita nome nem
+             emoji aqui — evita erro de digitação/emoji errado. -->
+        <div class="mfld" id="pm-streaming-picker-field" style="display:none">
+          <div class="mlbl">Streaming</div>
+          <div id="pm-streaming-accordion"></div>
+        </div>
+
+        <!-- Campo de tipo customizado, só aparece no modo Personalizado.
+             Tudo em branco: nome do tipo + emoji digitados na hora, sem
+             gravar nada pra reutilização futura — é avulso por cadastro. -->
+        <div class="mfld" id="pm-custom-fields" style="display:none">
+          <div class="mlbl">Emoji</div>
+          <input class="inp" id="pm-custom-emoji" placeholder="Ex: 🔑 (cole o emoji aqui)" style="margin-bottom:10px"/>
+          <div class="mlbl">Nome do tipo</div>
+          <input class="inp" id="pm-custom-tiponome" placeholder="Ex: WAREZ CDN" style="margin-bottom:0"/>
         </div>
 
         <!-- Só aparece quando Tipo = Código VIP App. Preenche nome+valor
@@ -348,7 +368,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
         </div>
 
         <div class="mfld">
-          <div class="mlbl">Nome/Descrição</div>
+          <div class="mlbl" id="pm-nome-label">Nome/Descrição</div>
           <input class="inp" id="pm-nome" placeholder="Ex: Xtream Premium 30 dias" style="margin-bottom:0"/>
         </div>
 
@@ -419,7 +439,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
         <button class="fbtn on" id="pmt-todos" onclick="setPmTipo('todos')">Todos os tipos</button>
         <button class="fbtn" id="pmt-xtream" onclick="setPmTipo('xtream')">📺 Xtream</button>
         <button class="fbtn" id="pmt-vip" onclick="setPmTipo('vip')">🎟️ VIP</button>
-        <button class="fbtn" id="pmt-outro" onclick="setPmTipo('outro')">🎁 Outros</button>
+        <button class="fbtn" id="pmt-outro" onclick="setPmTipo('streamings')">🎬 Streamings</button>
       </div>
       <div id="pm-list"><div class="empty">Carregando...</div></div>
 
@@ -915,13 +935,70 @@ function toast(msg){
 // ── PRÊMIOS ────────────────────────────────────────────────────────────────
 let allPremios=[], pmFilter='livres', pmTipo='todos';
 
+// Lista fixa de streamings pré-gravados — nome, emoji e slug (usado como
+// "tipo" no banco) já vêm prontos. Cadastrar um prêmio aqui é só escolher
+// o streaming e preencher valor + descrição do plano (ex: Mensal, Anual);
+// nada de nome/emoji digitado à mão, evita erro de digitação.
+const STREAMINGS_FIXOS = [
+  {slug:'netflix',     emoji:'🎬', nome:'Netflix'},
+  {slug:'paramount',   emoji:'🎁', nome:'Paramount+'},
+  {slug:'crunchyroll', emoji:'🍥', nome:'Crunchyroll'},
+  {slug:'prime',       emoji:'📦', nome:'Prime Video'},
+];
+let streamingSelecionado = STREAMINGS_FIXOS[0].slug;
+
+let pmModo = 'xtream'; // xtream | vip | streaming | personalizado
+
+function setPmModo(modo){
+  pmModo = modo;
+  ['xtream','vip','streaming','personalizado'].forEach(m=>{
+    document.getElementById(`pmm-${m}`).classList.toggle('on', m===modo);
+  });
+  document.getElementById('pm-xt-fields').style.display = modo==='xtream' ? 'block' : 'none';
+  document.getElementById('pm-m3u-fields').style.display = modo==='xtream' ? 'block' : 'none';
+  document.getElementById('pm-outro-fields').style.display = modo==='xtream' ? 'none' : 'block';
+  document.getElementById('pm-vip-plano-field').style.display = modo==='vip' ? 'block' : 'none';
+  document.getElementById('pm-streaming-picker-field').style.display = modo==='streaming' ? 'block' : 'none';
+  document.getElementById('pm-custom-fields').style.display = modo==='personalizado' ? 'block' : 'none';
+
+  const nomeLabel = document.getElementById('pm-nome-label');
+  const nomeInput = document.getElementById('pm-nome');
+  if(modo==='streaming'){
+    nomeLabel.textContent = 'Plano (ex: Mensal, Anual, Vitalício)';
+    nomeInput.placeholder = 'Ex: Anual';
+  } else if(modo==='personalizado'){
+    nomeLabel.textContent = 'Nome/Descrição';
+    nomeInput.placeholder = 'Ex: Chave de ativação Windows 11';
+  } else {
+    nomeLabel.textContent = 'Nome/Descrição';
+    nomeInput.placeholder = 'Ex: Xtream Premium 30 dias';
+  }
+
+  if(modo==='vip') aplicarPlanoVip();
+  if(modo==='streaming') renderStreamingAccordion();
+}
+
+// Monta a sanfona (accordion) com os streamings fixos. Clicar num item
+// seleciona ele (destaca visualmente) e guarda o slug em streamingSelecionado.
+function renderStreamingAccordion(){
+  const el = document.getElementById('pm-streaming-accordion');
+  el.innerHTML = STREAMINGS_FIXOS.map(s => `
+    <div class="fbtn ${s.slug===streamingSelecionado?'on':''}"
+         style="display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer;width:100%;justify-content:flex-start;padding:10px 12px"
+         onclick="selecionarStreaming('${s.slug}')">
+      <span style="font-size:16px">${s.emoji}</span><span>${s.nome}</span>
+    </div>
+  `).join('');
+}
+
+function selecionarStreaming(slug){
+  streamingSelecionado = slug;
+  renderStreamingAccordion();
+}
+
 function togglePmFields(){
-  const tipo=document.getElementById('pm-tipo').value;
-  document.getElementById('pm-xt-fields').style.display=tipo==='xtream'?'block':'none';
-  document.getElementById('pm-m3u-fields').style.display=tipo==='xtream'?'block':'none';
-  document.getElementById('pm-outro-fields').style.display=tipo==='xtream'?'none':'block';
-  document.getElementById('pm-vip-plano-field').style.display=tipo==='vip'?'block':'none';
-  if(tipo==='vip') aplicarPlanoVip(); // já preenche nome+valor com o plano selecionado por padrão
+  // Mantido por compatibilidade — a lógica real agora vive em setPmModo().
+  setPmModo(pmModo);
 }
 
 // Preenche Nome/Descrição e Valor automaticamente a partir do plano VIP
@@ -988,7 +1065,8 @@ function setPmFilter(f){
 function setPmTipo(t){
   pmTipo=t;
   ['todos','xtream','vip','outro'].forEach(x=>{
-    document.getElementById(`pmt-${x}`).classList.toggle('on',x===t);
+    const id = x==='outro' ? 'pmt-outro' : `pmt-${x}`;
+    document.getElementById(id).classList.toggle('on', (x==='outro'?'streamings':x)===t);
   });
   renderPremios();
 }
@@ -998,10 +1076,13 @@ function renderPremios(){
   let list=allPremios;
   if(pmFilter==='livres')list=list.filter(p=>!p.usado);
   else if(pmFilter==='usados')list=list.filter(p=>p.usado);
-  if(pmTipo!=='todos')list=list.filter(p=>p.tipo===pmTipo);
+  if(pmTipo==='streamings') list=list.filter(p=>p.tipo!=='xtream'&&p.tipo!=='vip');
+  else if(pmTipo!=='todos') list=list.filter(p=>p.tipo===pmTipo);
   if(!list.length){el.innerHTML='<div class="empty">Nenhum prêmio encontrado.</div>';return}
   el.innerHTML=list.map(p=>{
-    const emoji=p.tipo==='xtream'?'📺':p.tipo==='vip'?'🎟️':'🎁';
+    // Emoji: xtream/vip têm fixo; qualquer outro tipo usa o emoji salvo
+    // junto com o prêmio (p.emoji), com ✨ como fallback de segurança.
+    const emoji=p.tipo==='xtream'?'📺':p.tipo==='vip'?'🎟️':(p.emoji||'✨');
     const statusBadge=p.usado
       ?'<span class="badge bg-r">Usado</span>'
       :'<span class="badge bg-g">Livre</span>';
@@ -1027,10 +1108,38 @@ function renderPremios(){
   }).join('');
 }
 
+// Gera um slug simples a partir de um texto livre (usado como "tipo" no
+// banco para o modo Personalizado). Ex: "WAREZ CDN" -> "warez_cdn"
+function slugify(txt){
+  return txt.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().trim().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'personalizado';
+}
+
 async function adicionarPremio(){
   const err=document.getElementById('pm-add-err');err.textContent='';
-  const tipo=document.getElementById('pm-tipo').value;
-  const nome=document.getElementById('pm-nome').value.trim();
+
+  let tipo, nome, emojiCustom=null;
+  if(pmModo==='xtream'){
+    tipo='xtream';
+    nome=document.getElementById('pm-nome').value.trim();
+  } else if(pmModo==='vip'){
+    tipo='vip';
+    nome=document.getElementById('pm-nome').value.trim();
+  } else if(pmModo==='streaming'){
+    const s=STREAMINGS_FIXOS.find(x=>x.slug===streamingSelecionado);
+    tipo=s.slug;
+    const plano=document.getElementById('pm-nome').value.trim();
+    if(!plano){err.textContent='⚠️ Preencha o plano (ex: Anual, Mensal).';return}
+    nome=`${s.nome} — ${plano}`; // ex: "Netflix — Anual"
+    emojiCustom=s.emoji;
+  } else { // personalizado
+    const tipoNome=document.getElementById('pm-custom-tiponome').value.trim();
+    const emoji=document.getElementById('pm-custom-emoji').value.trim();
+    if(!tipoNome){err.textContent='⚠️ Preencha o nome do tipo.';return}
+    tipo=slugify(tipoNome);
+    nome=document.getElementById('pm-nome').value.trim() || tipoNome;
+    emojiCustom=emoji || '✨';
+  }
   const valor=document.getElementById('pm-valor').value.trim();
   if(!nome||!valor){err.textContent='⚠️ Preencha nome e valor.';return}
 
@@ -1088,7 +1197,7 @@ async function adicionarPremio(){
     if(!linhas.length){err.textContent='⚠️ Preencha o conteúdo.';return}
     let ok=0, fail=0;
     for(const linha of linhas){
-      const payload=JSON.stringify({tipo,nome,conteudo:linha,valor:parseFloat(valor),data_exp:null});
+      const payload=JSON.stringify({tipo,nome,conteudo:linha,valor:parseFloat(valor),data_exp:null,emoji:emojiCustom});
       const d=await apicall(`premio_add:${encodeURIComponent(payload)}`);
       if(d.ok) ok++; else fail++;
     }
