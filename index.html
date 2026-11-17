@@ -558,7 +558,7 @@ async function doLogin(){
   const btn=document.getElementById('lbtn');
   btn.textContent='Verificando...';btn.disabled=true;
   try{
-    const r=await fetch(`${api}/admin?cmd=stats&pass=${encodeURIComponent(pass)}`);
+    const r=await adminFetch(api,'stats',pass);
     if(r.status===403){showLE('Senha incorreta.');btn.textContent='Entrar';btn.disabled=false;return}
     if(!r.ok){showLE(`Erro ao conectar (${r.status}).`);btn.textContent='Entrar';btn.disabled=false;return}
   }catch(e){showLE('Não foi possível conectar.');btn.textContent='Entrar';btn.disabled=false;return}
@@ -574,10 +574,22 @@ function logout(){
   document.getElementById('app').style.display='none';
 }
 
-// API
+// API — senha vai no header X-Admin-Pass (não na URL).
+// Se o bot ainda for a versão antiga (403), tenta o query param legado só nessa transição.
+function adminHeaders(pass){
+  return {"X-Admin-Pass": pass, "Accept": "application/json"};
+}
+async function adminFetch(api, cmd, pass){
+  const base=`${api}/admin?cmd=${encodeURIComponent(cmd)}`;
+  let r=await fetch(base, {headers: adminHeaders(pass)});
+  if(r.status===403){
+    r=await fetch(`${base}&pass=${encodeURIComponent(pass)}`);
+  }
+  return r;
+}
 async function apicall(cmd){
   try{
-    const r=await fetch(`${API}/admin?cmd=${encodeURIComponent(cmd)}&pass=${encodeURIComponent(PASS)}`);
+    const r=await adminFetch(API, cmd, PASS);
     if(!r.ok)return{error:`HTTP ${r.status}`};
     return await r.json();
   }catch(e){return{error:e.message}}
