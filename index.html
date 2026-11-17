@@ -313,7 +313,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
         <div class="stitle" style="margin-bottom:6px">🚀 Disparar propaganda agora</div>
         <div class="binfo">Envia agora, com os botões "Baixar app", nos destinos marcados.</div>
         <div class="dest" id="pr-dest"><div class="empty">Carregando destinos…</div></div>
-        <textarea id="pr-manual" placeholder="Vazio = usa o texto padrão do app. Use {contato} para seu @." oninput="preview('pr')"></textarea>
+        <textarea id="pr-manual" placeholder="Vazio = usa o texto padrão do app. Use {contato} para seu @ e {suporte} para o link do suporte (WhatsApp)." oninput="preview('pr')"></textarea>
         <div class="binfo">Prévia:</div>
         <div class="prev" id="pr-prev"></div>
         <div style="display:flex;gap:8px;align-items:center">
@@ -636,7 +636,8 @@ function tgHtml(t){
 function preview(k){
   const ta=document.getElementById(k==='bc'?'bc-msg':'pr-manual');
   let t=ta.value;
-  if(k==='pr'){t=t||(window._prPadrao||'');t=t.replace(/\{contato\}/g,'@RaffDimitri');}
+  if(k==='pr'){t=t||(window._prPadrao||'');t=t.replace(/\{contato\}/g,window._contato||'@RaffDimitri');}
+  t=t.replace(/\{suporte\}/g,window._suporte||'💬 Suporte no WhatsApp');
   document.getElementById(k+'-prev').innerHTML=tgHtml(t);
 }
 let DEST=[];
@@ -931,6 +932,8 @@ async function loadPR(){
     partes.push(d.usa_personalizadas?'Usa as personalizadas abaixo (se houver).':'As personalizadas ficam salvas, mas o envio usa os textos padrão do app (PROPAGANDA_USE_DB=0).');
     auto.innerHTML=partes.join(' ');
   }
+  if(d.contato_html)window._contato=d.contato_html;
+  if(d.suporte_html)window._suporte=d.suporte_html;
   if(d.fixas&&d.fixas.length){
     window._prPadrao=d.fixas[0];preview('pr');
     felEl.innerHTML=d.fixas.map((t,i)=>`
