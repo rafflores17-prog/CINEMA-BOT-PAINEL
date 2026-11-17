@@ -172,8 +172,18 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);
   background:var(--sur);border:1px solid var(--bor);border-radius:9px;
   padding:10px 18px;font-size:13px;font-weight:600;opacity:0;transition:.3s;
-  z-index:300;white-space:nowrap;pointer-events:none}
+  z-index:300;white-space:pre-line;max-width:92vw;text-align:left;pointer-events:none}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:#e5484d}
+.dest{display:flex;flex-direction:column;gap:6px;margin:8px 0 10px}
+.dest label{display:flex;gap:8px;align-items:flex-start;font-size:13px;cursor:pointer;
+  background:var(--bg);border:1px solid var(--bor);border-radius:7px;padding:7px 9px}
+.dest label.off{opacity:.6}
+.dest small{color:var(--mut);font-family:var(--mono);font-size:11px}
+.prev{white-space:pre-wrap;background:var(--bg);border:1px dashed var(--bor);border-radius:7px;
+  padding:9px 11px;font-size:13px;margin:6px 0 10px;min-height:20px}
+.prev:empty::before{content:'Prévia aparece aqui…';color:var(--mut)}
+.res{font-size:12px;margin-top:8px;white-space:pre-line}
 </style>
 </head>
 <body>
@@ -277,13 +287,18 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
     <!-- BROADCAST -->
     <div class="tc" id="tc-bc">
       <div class="bcard">
-        <div class="stitle" style="margin-bottom:6px">📢 Mensagem para todos os clientes ativos</div>
+        <div class="stitle" style="margin-bottom:6px">📢 Mensagem para os grupos/canais</div>
         <div class="binfo" id="bc-info">—</div>
-        <textarea id="bc-msg" placeholder="Digite a mensagem..."></textarea>
+        <div class="binfo">Destinos (marque onde enviar):</div>
+        <div class="dest" id="bc-dest"><div class="empty">Carregando destinos…</div></div>
+        <textarea id="bc-msg" placeholder="Digite a mensagem... (aceita &lt;b&gt;negrito&lt;/b&gt;, &lt;i&gt;itálico&lt;/i&gt; e links)" oninput="preview('bc')"></textarea>
+        <div class="binfo">Prévia:</div>
+        <div class="prev" id="bc-prev"></div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button class="btn bp" onclick="enviarBC()">📤 Enviar para todos</button>
+          <button class="btn bp" onclick="enviarBC()">📤 Enviar</button>
           <span id="bc-st" style="font-size:12px;color:var(--mut)"></span>
         </div>
+        <div class="res" id="bc-res"></div>
       </div>
     </div>
 
@@ -291,21 +306,23 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
     <div class="tc" id="tc-pr">
       <div class="bcard">
         <div class="stitle" style="margin-bottom:6px">🚀 Disparar propaganda agora</div>
-        <div class="binfo">Envia imediatamente nos dois canais (streamflixofc + streamflixvip).</div>
-        <textarea id="pr-manual" placeholder="Vazio = usa próxima da fila automática..."></textarea>
+        <div class="binfo">Envia agora, com os botões "Baixar app", nos destinos marcados.</div>
+        <div class="dest" id="pr-dest"><div class="empty">Carregando destinos…</div></div>
+        <textarea id="pr-manual" placeholder="Vazio = usa o texto padrão do app. Use {contato} para seu @." oninput="preview('pr')"></textarea>
+        <div class="binfo">Prévia:</div>
+        <div class="prev" id="pr-prev"></div>
         <div style="display:flex;gap:8px;align-items:center">
           <button class="btn bp" onclick="dispararPR()">🚀 Disparar</button>
           <span id="pr-st" style="font-size:12px;color:var(--mut)"></span>
         </div>
+        <div class="res" id="pr-res"></div>
       </div>
       <div class="sh">
         <div class="stitle">📋 Fila de mensagens</div>
         <button class="btn bp bsm" onclick="openProMod()">+ Nova</button>
       </div>
-      <div class="binfo" style="margin-bottom:10px">
-        Automático: <b>10h, 15h e 19h</b> (Brasília). Sem personalizadas → usa as 5 fixas em rotação.
-      </div>
-      <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Fixas padrão</div>
+      <div class="binfo" style="margin-bottom:10px" id="pr-auto">—</div>
+      <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Textos padrão do app</div>
       <div id="pr-fixas"></div>
       <div style="font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px">Personalizadas</div>
       <div id="pr-custom"><div class="empty">Nenhuma — usando as fixas.</div></div>
@@ -478,14 +495,20 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
       </div>
       <div class="cgrp">
         <div class="cgtitle">⚙️ Configurar cliente</div>
-        <div class="citem"><div class="csyn">/setmodo CHAT_ID completo|basico</div><div class="cdesc">Define modo de acesso.</div></div>
-        <div class="citem"><div class="csyn">/setsite CHAT_ID URL</div><div class="cdesc">Define site personalizado no rodapé.</div></div>
-        <div class="citem"><div class="csyn">/setsite CHAT_ID remover</div><div class="cdesc">Remove o site personalizado.</div></div>
+        <div class="citem"><div class="csyn">/config CHAT_ID modo completo|simples</div><div class="cdesc">Completo: botões assistir + site/app. Simples: só assistir.</div></div>
+        <div class="citem"><div class="csyn">/config CHAT_ID site URL</div><div class="cdesc">Define site personalizado do cliente.</div></div>
+        <div class="citem"><div class="csyn">/config CHAT_ID site remover</div><div class="cdesc">Volta ao site padrão.</div></div>
+      </div>
+      <div class="cgrp">
+        <div class="cgtitle">🎬 Para o público (privado e grupo)</div>
+        <div class="citem"><div class="csyn">Digite só o nome</div><div class="cdesc">Ex.: Duna, Outra Mamãe, Jackie Chan — card, lista ou ator.</div></div>
+        <div class="citem"><div class="csyn">/filme · /serie · /ator · /top10</div><div class="cdesc">Buscas por comando.</div></div>
+        <div class="citem"><div class="csyn">/ia pergunta</div><div class="cdesc">Assistente (no privado, basta perguntar).</div></div>
+        <div class="citem"><div class="csyn">/indique · /comandos</div><div class="cdesc">Indique e ganhe; guia de uso.</div></div>
       </div>
       <div class="cgrp">
         <div class="cgtitle">📡 Envio manual</div>
-        <div class="citem"><div class="csyn">/cartaz</div><div class="cdesc">Posta filmes em cartaz para todos os ativos.</div></div>
-        <div class="citem"><div class="csyn">/trending</div><div class="cdesc">Posta trending da semana para todos os ativos.</div></div>
+        <div class="citem"><div class="csyn">Abas Mensagem e Propagandas</div><div class="cdesc">Escolha os grupos, veja a prévia e envie. O resultado mostra onde falhou e por quê.</div></div>
       </div>
     </div>
   </div>
@@ -510,8 +533,8 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
     <div class="mfld">
       <div class="mlbl">Modo</div>
       <select class="inp" id="m-modo">
-        <option value="completo">Completo</option>
-        <option value="basico">Básico</option>
+        <option value="completo">Completo (assistir + site/app)</option>
+        <option value="simples">Simples (só assistir)</option>
       </select>
     </div>
     <div class="mfld">
@@ -586,6 +609,59 @@ async function adminFetch(api, cmd, pass){
     r=await fetch(`${base}&pass=${encodeURIComponent(pass)}`);
   }
   return r;
+}
+async function apipost(cmd, data){
+  try{
+    const r=await fetch(`${API}/admin`,{method:'POST',
+      headers:{...adminHeaders(PASS),'Content-Type':'application/json'},
+      body:JSON.stringify({cmd,...(data||{})})});
+    let j={};try{j=await r.json()}catch(e){}
+    if(!r.ok&&!j.error)j.error=`HTTP ${r.status}`;
+    return j;
+  }catch(e){return{error:e.message}}
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+// Prévia no estilo do Telegram (só as tags que o Telegram aceita)
+function tgHtml(t){
+  let s=esc(t);
+  s=s.replace(/&lt;(\/?)(b|strong|i|em|u|s|code)&gt;/g,'<$1$2>');
+  s=s.replace(/&lt;a href=&quot;(https?:\/\/[^&]+?)&quot;&gt;(.*?)&lt;\/a&gt;/g,'<a href="$1" target="_blank">$2</a>');
+  return s;
+}
+function preview(k){
+  const ta=document.getElementById(k==='bc'?'bc-msg':'pr-manual');
+  let t=ta.value;
+  if(k==='pr'){t=t||(window._prPadrao||'');t=t.replace(/\{contato\}/g,'@RaffDimitri');}
+  document.getElementById(k+'-prev').innerHTML=tgHtml(t);
+}
+let DEST=[];
+async function loadDestinos(){
+  const d=await apicall('destinos');
+  const els=['bc-dest','pr-dest'].map(id=>document.getElementById(id));
+  if(d.error||!d.destinos){els.forEach(e=>e.innerHTML=`<div class="empty">Erro ao carregar destinos: ${esc(d.error||'?')}</div>`);return}
+  DEST=d.destinos;
+  if(!DEST.length){els.forEach(e=>e.innerHTML='<div class="empty">Nenhum grupo/canal ativo.</div>');return}
+  els.forEach(e=>{
+    const k=e.id.split('-')[0];
+    e.innerHTML=DEST.map(x=>{
+      const ok=x.acessivel!==false;
+      const nome=esc(x.titulo||x.nome||'Sem nome');
+      const extra=[x.username?'@'+esc(x.username):'',x.topico?'tópico '+x.topico:'',esc(x.origem||'')].filter(Boolean).join(' · ');
+      return `<label class="${ok?'':'off'}"><input type="checkbox" class="${k}-ck" value="${x.chat_id}" ${ok?'checked':''}>
+        <span>${ok?'✅':'⚠️'} <b>${nome}</b><br><small>${x.chat_id}${extra?' · '+extra:''}</small>
+        ${ok?'':`<br><small style="color:#e5484d">Bot sem acesso: ${esc(x.erro||'')}</small>`}</span></label>`;
+    }).join('');
+  });
+}
+function escolhidos(k){return [...document.querySelectorAll('.'+k+'-ck:checked')].map(c=>Number(c.value))}
+function mostrarResultado(k,d){
+  const el=document.getElementById(k+'-res');
+  if(!d){el.textContent='';return}
+  let t=`Enviado: ${d.enviados??0} de ${d.total??0}`;
+  if(d.falhas&&d.falhas.length)t+='\nFalhas:\n'+d.falhas.map(f=>`• ${f.chat_id}: ${f.erro}`).join('\n');
+  if(d.error)t+='\n'+d.error;
+  el.textContent=t;
+  el.style.color=(d.falhas&&d.falhas.length)||!d.ok?'#e5484d':'var(--grn)';
 }
 async function apicall(cmd){
   try{
@@ -667,9 +743,9 @@ function renderCl(list){
     const ok=c.ativo;
     const dias=c.dias_rest??-1;
     const dcol=dias>7?'grn':dias>0?'yel':'acc';
-    const site=c.site_url?`<a href="${c.site_url}" target="_blank" style="color:var(--ora)">${c.site_url.replace('https://','')}</a>`:'—';
+    const site=c.site_url?`<a href="${esc(c.site_url)}" target="_blank" style="color:var(--ora)">${esc(c.site_url.replace('https://',''))}</a>`:'—';
     const nomeEl=c.nome_canal
-      ?`<span class="cnome">📺 ${c.nome_canal}</span>`
+      ?`<span class="cnome">📺 ${esc(c.nome_canal)}</span>`
       :`<span class="cnome-ph">Sem nome</span>`;
     return `<div class="ccard">
       <div class="ccard-head">
@@ -685,7 +761,7 @@ function renderCl(list){
       </div>
       <div class="cacts">
         <button class="btn bg2 bsm" onclick="renovar(${c.chat_id})">↻ Renovar</button>
-        <button class="btn by bsm" onclick="openEdit(${c.chat_id},'${c.modo||'completo'}','${c.site_url||''}','${c.nome_canal||''}')">✏️ Config</button>
+        <button class="btn by bsm" onclick="openEditId(${c.chat_id})">✏️ Config</button>
         <button class="btn br bsm" onclick="deletarCliente(${c.chat_id})">🗑️ Deletar</button>
       </div>
     </div>`;
@@ -693,9 +769,10 @@ function renderCl(list){
 }
 
 async function renovar(cid){
+  if(!confirm(`Renovar ${cid} por mais 30 dias?`))return;
   const d=await apicall(`renovar:${cid}`);
   if(d.ok){toast('✅ Renovado até '+d.validade);loadAll();}
-  else toast('❌ Erro ao renovar');
+  else toast('❌ Erro ao renovar: '+(d.error||'cliente não encontrado'));
 }
 
 async function deletarCliente(cid){
@@ -786,11 +863,15 @@ function cpTk(btn,txt){
 async function enviarBC(){
   const msg=document.getElementById('bc-msg').value.trim();
   if(!msg){toast('⚠️ Digite uma mensagem');return}
-  if(!confirm('Enviar para TODOS os clientes ativos?'))return;
+  const ids=escolhidos('bc');
+  if(DEST.length&&!ids.length){toast('⚠️ Marque pelo menos um destino');return}
+  if(!confirm(`Enviar para ${ids.length||'todos os'} destino(s)?`))return;
   document.getElementById('bc-st').textContent='Enviando...';
-  const d=await apicall(`broadcast:${encodeURIComponent(msg)}`);
-  if(d.ok){toast(`✅ Enviado para ${d.enviados||0} cliente(s)`);document.getElementById('bc-msg').value='';}
-  else toast('❌ Erro: '+(d.error||'?'));
+  const d=await apipost('broadcast',{msg,chat_ids:ids});
+  mostrarResultado('bc',d);
+  if(d.ok&&!(d.falhas||[]).length){toast(`✅ Enviado para ${d.enviados} destino(s)`);document.getElementById('bc-msg').value='';preview('bc');}
+  else if(d.ok)toast(`⚠️ Enviado para ${d.enviados} de ${d.total}. Veja as falhas abaixo.`);
+  else toast('❌ '+(d.error||'Erro ao enviar'));
   document.getElementById('bc-st').textContent='';
 }
 
@@ -816,11 +897,20 @@ async function loadPR(){
   const felEl=document.getElementById('pr-fixas');
   const cusEl=document.getElementById('pr-custom');
   if(d.error){felEl.innerHTML='';cusEl.innerHTML='<div class="empty">Suba o bot.py atualizado para usar propagandas.</div>';return}
+  const auto=document.getElementById('pr-auto');
+  if(auto){
+    const partes=[];
+    partes.push(d.automatico?`Propaganda automática: <b>${(d.horarios||[]).join(', ')}</b> (Fortaleza).`:'Propaganda automática: <b>desligada</b> (só pelo botão Disparar).');
+    if(d.promo_diaria)partes.push(`Post diário do app: <b>${d.promo_hora}</b>.`);
+    partes.push(d.usa_personalizadas?'Usa as personalizadas abaixo (se houver).':'As personalizadas ficam salvas, mas o envio usa os textos padrão do app (PROPAGANDA_USE_DB=0).');
+    auto.innerHTML=partes.join(' ');
+  }
   if(d.fixas&&d.fixas.length){
+    window._prPadrao=d.fixas[0];preview('pr');
     felEl.innerHTML=d.fixas.map((t,i)=>`
       <div class="pitem">
-        <div class="pmeta">Mensagem fixa ${i+1}</div>
-        <div class="ptxt">${t.replace(/\n/g,'<br>').replace(/\{contato\}/g,'<b>@RaffDimitri</b>')}</div>
+        <div class="pmeta">Texto padrão ${i+1}${i===0?' · usado no Disparar vazio':''}</div>
+        <div class="ptxt">${tgHtml(t).replace(/\n/g,'<br>')}</div>
       </div>`).join('');
   }
   if(!d.propagandas||!d.propagandas.length){
@@ -831,7 +921,7 @@ async function loadPR(){
       <div style="display:flex;justify-content:space-between;gap:8px">
         <div>
           <div class="pmeta">#${p.id} · ${p.criado_em}</div>
-          <div class="ptxt">${p.texto.replace(/\n/g,'<br>')}</div>
+          <div class="ptxt">${tgHtml(p.texto).replace(/\n/g,'<br>')}</div>
         </div>
         <button class="btn br bsm" onclick="delPR(${p.id})" style="flex-shrink:0">✕</button>
       </div>
@@ -840,10 +930,15 @@ async function loadPR(){
 
 async function dispararPR(){
   const txt=document.getElementById('pr-manual').value.trim();
+  const ids=escolhidos('pr');
+  if(DEST.length&&!ids.length){toast('⚠️ Marque pelo menos um destino');return}
+  if(!confirm(`Disparar propaganda em ${ids.length||'todos os'} destino(s)?`))return;
   document.getElementById('pr-st').textContent='Enviando...';
-  const d=await apicall(txt?`propaganda_disparo:${encodeURIComponent(txt)}`:'propaganda_disparo:');
-  if(d.ok){toast(`✅ Enviado para ${d.enviados} canal(is)!`);document.getElementById('pr-manual').value='';}
-  else toast('❌ '+(d.error||'Erro'));
+  const d=await apipost('propaganda_disparo',{texto:txt,chat_ids:ids});
+  mostrarResultado('pr',d);
+  if(d.ok&&!(d.falhas||[]).length){toast(`✅ Propaganda enviada em ${d.enviados} destino(s)!`);document.getElementById('pr-manual').value='';preview('pr');}
+  else if(d.ok)toast(`⚠️ Enviada em ${d.enviados} de ${d.total}. Veja as falhas abaixo.`);
+  else toast('❌ '+(d.error||'Erro ao disparar'));
   document.getElementById('pr-st').textContent='';
 }
 
@@ -856,9 +951,9 @@ function openProMod(){
 async function salvarPR(){
   const txt=document.getElementById('m-pr-txt').value.trim();
   if(!txt){document.getElementById('mod-pr-err').textContent='⚠️ Digite a mensagem.';return}
-  const d=await apicall(`propaganda_add:${encodeURIComponent(txt)}`);
+  const d=await apipost('propaganda_add',{texto:txt});
   if(d.ok){toast('✅ Salva!');closeMod('pr');loadPR();}
-  else toast('❌ Erro ao salvar');
+  else toast('❌ Erro ao salvar: '+(d.error||'?'));
 }
 
 async function delPR(pid){
@@ -882,6 +977,10 @@ function openMod(mode){
   document.getElementById('mod-cl').classList.add('on');
 }
 
+function openEditId(cid){
+  const c=allCl.find(x=>x.chat_id===cid)||{};
+  openEdit(cid,c.modo==='basico'?'simples':(c.modo||'completo'),c.site_url||'',c.nome_canal||'');
+}
 function openEdit(cid,modo,site,nome){
   modMode='edit';editCid=cid;
   document.getElementById('mod-cl-title').textContent='Configurar cliente';
@@ -909,14 +1008,17 @@ async function modConfirm(){
     if(!cid||!tok){err.textContent='⚠️ Preencha Chat ID e Token.';btn.disabled=false;btn.textContent='Confirmar';return}
     const d=await apicall(`ativar:${cid}:${tok}`);
     if(!d.ok){err.textContent='❌ '+(d.error||'Erro');btn.disabled=false;btn.textContent='Confirmar';return}
-    if(modo!=='completo')await apicall(`config_modo:${cid}:${modo}`);
-    if(site)await apicall(`config_site:${cid}:${encodeURIComponent(site)}`);
-    if(nome)await apicall(`config_nome:${cid}:${encodeURIComponent(nome)}`);
-    toast('✅ Cliente ativado!');
+    const erros=[];
+    if(modo!=='completo'){const r=await apicall(`config_modo:${cid}:${modo}`);if(!r.ok)erros.push('modo: '+(r.error||'?'))}
+    if(site){const r=await apicall(`config_site:${cid}:${encodeURIComponent(site)}`);if(!r.ok)erros.push('site: '+(r.error||'?'))}
+    if(nome){const r=await apicall(`config_nome:${cid}:${encodeURIComponent(nome)}`);if(!r.ok)erros.push('nome: '+(r.error||'?'))}
+    toast(erros.length?'⚠️ Cliente ativado, mas: '+erros.join('; '):'✅ Cliente ativado até '+(d.validade||'?'));
   }else{
-    await apicall(`config_modo:${editCid}:${modo}`);
-    await apicall(`config_site:${editCid}:${encodeURIComponent(site||'remover')}`);
-    await apicall(`config_nome:${editCid}:${encodeURIComponent(nome||'remover')}`);
+    const erros=[];
+    const r1=await apicall(`config_modo:${editCid}:${modo}`);if(!r1.ok)erros.push('modo: '+(r1.error||'?'));
+    const r2=await apicall(`config_site:${editCid}:${encodeURIComponent(site||'remover')}`);if(!r2.ok)erros.push('site: '+(r2.error||'?'));
+    const r3=await apicall(`config_nome:${editCid}:${encodeURIComponent(nome||'remover')}`);if(!r3.ok)erros.push('nome: '+(r3.error||'?'));
+    if(erros.length){err.textContent='❌ '+erros.join('; ');btn.disabled=false;btn.textContent='Confirmar';return}
     toast('✅ Configurações salvas!');
   }
   btn.disabled=false;btn.textContent='Confirmar';
@@ -932,15 +1034,18 @@ function goTab(id){
   });
   if(id==='hi')loadHi();
   if(id==='tk')loadTk();
-  if(id==='pr')loadPR();
+  if(id==='pr'){loadPR();loadDestinos();}
+  if(id==='bc')loadDestinos();
   if(id==='pm')loadPremios();
 }
 
 // TOAST
 function toast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('on');
-  setTimeout(()=>t.classList.remove('on'),3000);
+  const erro=/^(❌|⚠️)/.test(msg)||/falh/i.test(msg);
+  t.textContent=msg;t.classList.add('on');t.classList.toggle('err',erro);
+  clearTimeout(window._toastT);
+  window._toastT=setTimeout(()=>t.classList.remove('on'),erro?8000:3500);
 }
 
 
@@ -1171,7 +1276,7 @@ async function adicionarPremio(){
         if(!p){fail++;continue}
         const conteudo=`${p.host}|${p.login}|${p.senha}`;
         const payload=JSON.stringify({tipo,nome,conteudo,valor:parseFloat(valor),data_exp});
-        const d=await apicall(`premio_add:${encodeURIComponent(payload)}`);
+        const d=await apipost('premio_add',{data:JSON.parse(payload)});
         if(d.ok) ok++; else fail++;
       }
       if(ok>0){
@@ -1190,7 +1295,7 @@ async function adicionarPremio(){
       if(!hostManual||!login||!senha){err.textContent='⚠️ Preencha host, login e senha (ou cole URLs M3U acima).';return}
       const conteudo=`${hostManual}|${login}|${senha}`;
       const payload=JSON.stringify({tipo,nome,conteudo,valor:parseFloat(valor),data_exp});
-      const d=await apicall(`premio_add:${encodeURIComponent(payload)}`);
+      const d=await apipost('premio_add',{data:JSON.parse(payload)});
       if(d.ok){
         toast('✅ Xtream cadastrado!');
         document.getElementById('pm-nome').value='';
@@ -1210,7 +1315,7 @@ async function adicionarPremio(){
     let ok=0, fail=0;
     for(const linha of linhas){
       const payload=JSON.stringify({tipo,nome,conteudo:linha,valor:parseFloat(valor),data_exp:null,emoji:emojiCustom});
-      const d=await apicall(`premio_add:${encodeURIComponent(payload)}`);
+      const d=await apipost('premio_add',{data:JSON.parse(payload)});
       if(d.ok) ok++; else fail++;
     }
     if(ok>0){
