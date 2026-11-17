@@ -180,6 +180,11 @@ body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-he
   background:var(--bg);border:1px solid var(--bor);border-radius:7px;padding:7px 9px}
 .dest label.off{opacity:.6}
 .dest small{color:var(--mut);font-family:var(--mono);font-size:11px}
+.dest label>span{flex:1}
+.dest .rm{margin-left:auto;align-self:center;font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;
+  background:transparent;border:1px solid #e5484d;color:#e5484d}
+.dest .rm.re{border-color:var(--grn);color:var(--grn)}
+.dest .dtit{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-top:6px}
 .prev{white-space:pre-wrap;background:var(--bg);border:1px dashed var(--bor);border-radius:7px;
   padding:9px 11px;font-size:13px;margin:6px 0 10px;min-height:20px}
 .prev:empty::before{content:'Prévia aparece aqui…';color:var(--mut)}
@@ -640,7 +645,7 @@ async function loadDestinos(){
   const els=['bc-dest','pr-dest'].map(id=>document.getElementById(id));
   if(d.error||!d.destinos){els.forEach(e=>e.innerHTML=`<div class="empty">Erro ao carregar destinos: ${esc(d.error||'?')}</div>`);return}
   DEST=d.destinos;
-  if(!DEST.length){els.forEach(e=>e.innerHTML='<div class="empty">Nenhum grupo/canal ativo.</div>');return}
+  if(!DEST.length){els.forEach(e=>e.innerHTML='<div class="empty">Nenhum grupo/canal ativo.</div>'+desativadosHtml(d.desativados||[]));return}
   els.forEach(e=>{
     const k=e.id.split('-')[0];
     e.innerHTML=DEST.map(x=>{
@@ -649,9 +654,30 @@ async function loadDestinos(){
       const extra=[x.username?'@'+esc(x.username):'',x.topico?'tópico '+x.topico:'',esc(x.origem||'')].filter(Boolean).join(' · ');
       return `<label class="${ok?'':'off'}"><input type="checkbox" class="${k}-ck" value="${x.chat_id}" ${ok?'checked':''}>
         <span>${ok?'✅':'⚠️'} <b>${nome}</b><br><small>${x.chat_id}${extra?' · '+extra:''}</small>
-        ${ok?'':`<br><small style="color:#e5484d">Bot sem acesso: ${esc(x.erro||'')}</small>`}</span></label>`;
-    }).join('');
+        ${ok?'':`<br><small style="color:#e5484d">Bot sem acesso: ${esc(x.erro||'')}</small>`}</span>
+        <button class="rm" title="Parar de enviar para este chat" onclick="event.preventDefault();removerDestino(${x.chat_id})">Remover</button></label>`;
+    }).join('')+desativadosHtml(d.desativados||[]);
   });
+}
+function desativadosHtml(lst){
+  if(!lst.length)return '';
+  return '<div class="dtit">Removidos (o bot não envia nada para eles)</div>'+lst.map(x=>`
+    <label class="off"><span>🚫 <b>${esc(x.nome||x.origem||'Chat')}</b><br><small>${x.chat_id}${x.origem?' · '+esc(x.origem):''}</small>
+      ${x.fixo?'<br><small>Fixo pela variável DISABLED_CHAT_IDS no Koyeb</small>':''}</span>
+      ${x.fixo?'':`<button class="rm re" onclick="event.preventDefault();reativarDestino(${x.chat_id})">Reativar</button>`}</label>`).join('');
+}
+async function removerDestino(cid){
+  const x=DEST.find(d=>d.chat_id===cid)||{};
+  if(!confirm(`Remover ${x.titulo||x.nome||cid} (${cid})?\n\nO bot vai parar de enviar QUALQUER mensagem para este chat (propaganda, avisos, enquetes, boas-vindas). Dá para reativar depois.`))return;
+  const d=await apicall(`destino_desativar:${cid}`);
+  if(d.ok){toast('✅ Destino removido');loadDestinos();}
+  else toast('❌ Erro ao remover: '+(d.error||'?'));
+}
+async function reativarDestino(cid){
+  if(!confirm(`Reativar ${cid}? O bot volta a enviar para este chat.`))return;
+  const d=await apicall(`destino_reativar:${cid}`);
+  if(d.ok){toast('✅ Destino reativado');loadDestinos();}
+  else toast('❌ '+(d.error||'Erro ao reativar'));
 }
 function escolhidos(k){return [...document.querySelectorAll('.'+k+'-ck:checked')].map(c=>Number(c.value))}
 function mostrarResultado(k,d){
